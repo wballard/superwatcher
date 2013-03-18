@@ -46,6 +46,7 @@ verbs =
         #running of commands via GET, nothing is routed to STDIN
         app.get '/*', (request, response) ->
             toRun = path.join process.cwd(), request.path
+            response.set 'Content-Type', 'application/json'
             child_process.execFile toRun, (error, stdout, stderr) ->
                 if error
                     #big old error object in a JSON ball
@@ -58,10 +59,15 @@ verbs =
                     #for out own output so we can sweep this up in server logs
                     process.stderr.write errorString
                     process.stderr.write "\n"
-                    response.set 'Content-Type', 'application/json'
                     response.status(500).end errorString
                 else
+                    #and a program that runs just fine, go ahead and
+                    #just send back the results, we're counting on you
+                    #to return JSON, since we are telling the client this
+                    #is going to be JSON above
                     response.end(stdout)
+                    #and we'll keep the error bits to our server for logging
+                    process.stderr.write stderr
 
 
         io.set 'log level', 0

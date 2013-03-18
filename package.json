@@ -1,0 +1,24 @@
+{
+  "name": "superforker",
+  "version": "0.0.1",
+  "description": "Make web APIs using shell script techniques",
+  "main": "./bin/superforker.coffee",
+  "dependencies": {
+    "chokidar": "",
+    "socket.io": "",
+    "coffee-script": "",
+    "express": "",
+    "docopt": "",
+    "nodemon": ""
+  },
+  "engine": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "start": "./node_modules/nodemon/nodemon.js ./bin/superforker.coffee start",
+    "stop": "",
+    "test": "",
+    "predeploy": "",
+    "postdeploy": ""
+  }
+}

@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 echo "{'message': 'I am alive!'}"
 echo "I am alive!" >&2
+if [ "${METHOD}" == "POST" ]; then
+    cat /dev/fd/0 >&2
+fi

@@ -43,23 +43,29 @@ verbs =
         server = require('http').createServer(app)
         io = require('socket.io').listen(server)
         error_count = 0
+        cwd = process.cwd()
         #running of commands via GET, nothing is routed to STDIN
+        handleError = (response, error, stdout, stderr) ->
+            #big old error object in a JSON ball
+            error =
+                id: guid_like(Date.now(), error_count++)
+                at: Date.now()
+                error: error
+                message: stderr.toString()
+            errorString = JSON.stringify(error)
+            #for out own output so we can sweep this up in server logs
+            process.stderr.write errorString
+            process.stderr.write "\n"
+            response.status(500).end errorString
         app.get '/*', (request, response) ->
-            toRun = path.join process.cwd(), request.path
+            toRun = path.join cwd, request.path
             response.set 'Content-Type', 'application/json'
-            child_process.execFile toRun, (error, stdout, stderr) ->
+            options =
+                env:
+                    METHOD: 'GET'
+            child_process.execFile toRun, options, (error, stdout, stderr) ->
                 if error
-                    #big old error object in a JSON ball
-                    error =
-                        id: guid_like(Date.now(), error_count++)
-                        at: Date.now()
-                        error: error
-                        message: stderr.toString()
-                    errorString = JSON.stringify(error)
-                    #for out own output so we can sweep this up in server logs
-                    process.stderr.write errorString
-                    process.stderr.write "\n"
-                    response.status(500).end errorString
+                    handleError response, error, stdout, stderr
                 else
                     #and a program that runs just fine, go ahead and
                     #just send back the results, we're counting on you
@@ -68,8 +74,24 @@ verbs =
                     response.end(stdout)
                     #and we'll keep the error bits to our server for logging
                     process.stderr.write stderr
-
-
+        #POST is a lot like GET, but we don't repeat the comments
+        app.post '/*', (request, response) ->
+            toRun = path.join cwd, request.path
+            response.set 'Content-Type', 'application/json'
+            options =
+                env:
+                    METHOD: 'POST'
+            childProcess = child_process.execFile toRun, options, (error, stdout, stderr) ->
+                if error
+                    handleError response, error, stdout, stderr
+                else
+                    process.stderr.write stderr
+                    response.end(stdout)
+            #stream along the body
+            request.on 'data', (chunk) ->
+                childProcess.stdin.write chunk
+            request.on 'end', ->
+                childProcess.stdin.end()
         io.set 'log level', 0
         server.listen options.PORT
     stop: () ->

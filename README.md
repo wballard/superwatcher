@@ -1,4 +1,7 @@
 # Overview #
+
+Stick a FORK in HTTP!
+
 Superforker is trying to go back in time, to a happy place where we
 didn't have to worry about framework and threads. Our conjecture is that
 you can make a perfectly good, modern API using a mixture of three
@@ -15,15 +18,15 @@ request. This avoids the overhead of connecting over HTTP each request,
 freeing up that latency time to be invested in going framework free.
 
 # How It Works #
-Superforker connects Socket.IO to simple shell scripts with the
-following protocol:
+Superforker connects Socket.IO and HTTP to simple command line programs
+with the following protocol:
 
 * The 'message name' becomes the path to the command line program
 * The 'message' is written to the command line program STDIN
 * Environment variables matching CGI are supplied to the command line
 program
 * STDOUT is captured and written back as a Socket.IO message
-* STDERR is captured and written back as a Socket.IO message
+* STDERR is captured and logged server side
 
 So, you just write a program, read STDIN, do stuff, write STDOUT. This
 bridges building HTTP APIs with simple shell programming. You an send

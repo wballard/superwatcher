@@ -54,7 +54,12 @@ verbs =
                         at: Date.now()
                         error: error
                         message: stderr.toString()
-                    response.end JSON.stringify(error)
+                    errorString = JSON.stringify(error)
+                    #for out own output so we can sweep this up in server logs
+                    process.stderr.write errorString
+                    process.stderr.write "\n"
+                    response.set 'Content-Type', 'application/json'
+                    response.status(500).end errorString
                 else
                     response.end(stdout)
 

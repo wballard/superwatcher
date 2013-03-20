@@ -16,8 +16,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "./node_modules/forever/bin/forever start --pidFile $(pwd)/pidfile ./node_modules/nodemon/nodemon.js ./bin/superforker.coffee start",
-    "stop": "./node_modules/forever/bin/forever stop --pidFile $(pwd)/pidfile ./node_modules/nodemon/nodemon.js ./bin/superforker.coffee start",
+    "start": "./node_modules/forever/bin/forever start --pidFile $(pwd)/service.pid node_modules/nodemon/nodemon.js ./bin/superforker.coffee start",
+    "stop": "./node_modules/forever/bin/forever stop node_modules/nodemon/nodemon.js",
     "test": "make test",
     "predeploy": "",
     "postdeploy": ""

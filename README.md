@@ -4,7 +4,7 @@ Stick a FORK in HTTP!
 
 Superforker is trying to go back in time, to a happy place where we
 didn't have to worry about framework and threads. Our conjecture is that
-you can make a perfectly good, modern API using a mixture of three
+you can make a perfectly good, modern JSON API using a mixture of three
 techniques:
 
 * CGI style fork per request
@@ -18,14 +18,24 @@ request. This avoids the overhead of connecting over HTTP each request,
 freeing up that latency time to be invested in going framework free.
 
 # How It Works #
-Superforker connects Socket.IO and HTTP to simple command line programs
+Superforker connects Socket.IO to simple command line programs
 with the following protocol:
 
-* The 'message name' becomes the path to the command line program
-* The 'message' is written to the command line program STDIN
+* The _message name_ becomes the path to the command line program
+* The _message_ is written to the command line program STDIN
 * Environment variables matching CGI are supplied to the command line
 program
 * STDOUT is captured and written back as a Socket.IO message
+* STDERR is captured and logged server side
+
+Superforker connect HTTP with the following protocol:
+
+* The _request path_ becomes the path to the command line program
+* The _request parameters_ are transformed into switches `--name=value`
+* The POST body is written to the command line program STDIN
+* Environment variables matching CGI are supplied to the command line
+program
+* STDOUT is captured and written back as the response
 * STDERR is captured and logged server side
 
 So, you just write a program, read STDIN, do stuff, write STDOUT. This
@@ -34,24 +44,17 @@ any text you like.
 
 # The Server #
 The server is a node.js program, with socket.io, providing both the
-server and client library. This program looks at a root directory, under
-which you place all your command line programs, and maps them via
-convention to URLs. Each of the URLs ends up being a _callable message
-name_ over socket.io. 
-
-So, you can GET the result of a command line program synchronously. You
-can POST to a command line program, and get the results synchronously.
-You can socket.io message and get the results asynchronously.
+server and client library.
 
 ## Setup ##
 Superforker runs in a directory, its cwd. By convention, all the
 commands it runs are relative to this directory. In practice this means
-you do one of two things:
+you do one of two things to deploy a server:
 
 * make git submodules in a directory to pull in other sets of commands
 * symlink like a fiend to pull things into your namespace
 
-This is to avoid the need to 'configure a root directory', and also has
+This is to avoid the need to _configure a root directory_, and also has
 the benefit of keeping you from running any old command in `bin` -- like
 our friend `rm` for example.
 

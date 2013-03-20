@@ -44,6 +44,13 @@ verbs =
         io = require('socket.io').listen(server)
         error_count = 0
         cwd = process.cwd()
+        setup_environment = (request, method, environment={}) ->
+            environment =
+                METHOD: method
+                PATH_INFO: request.path
+                SCRIPT_NAME: path.basename(request.path)
+                SERVER_PORT: options.PORT
+                SERVER_NAME: request.host
         #running of commands via GET, nothing is routed to STDIN
         handleError = (response, error, stdout, stderr) ->
             #big old error object in a JSON ball
@@ -60,10 +67,9 @@ verbs =
         app.get '/*', (request, response) ->
             toRun = path.join cwd, request.path
             response.set 'Content-Type', 'application/json'
-            options =
-                env:
-                    METHOD: 'GET'
-            child_process.execFile toRun, options, (error, stdout, stderr) ->
+            child_options =
+              env: setup_environment(request, 'GET', {})
+            child_process.execFile toRun, child_options, (error, stdout, stderr) ->
                 if error
                     handleError response, error, stdout, stderr
                 else
@@ -78,10 +84,9 @@ verbs =
         app.post '/*', (request, response) ->
             toRun = path.join cwd, request.path
             response.set 'Content-Type', 'application/json'
-            options =
-                env:
-                    METHOD: 'POST'
-            childProcess = child_process.execFile toRun, options, (error, stdout, stderr) ->
+            child_options =
+              env: setup_environment(request, 'POST', {})
+            childProcess = child_process.execFile toRun, child_options, (error, stdout, stderr) ->
                 if error
                     handleError response, error, stdout, stderr
                 else

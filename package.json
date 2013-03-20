@@ -9,14 +9,15 @@
     "coffee-script": "",
     "express": "",
     "docopt": "",
-    "nodemon": ""
+    "nodemon": "",
+    "forever": ""
   },
   "engine": {
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "./node_modules/nodemon/nodemon.js ./bin/superforker.coffee start",
-    "stop": "",
+    "start": "./node_modules/forever/bin/forever -p `pwd` --pidFile .pid start ./node_modules/nodemon/nodemon.js --exitcrash ./bin/superforker.coffee start",
+    "stop": "./node_modules/forever/bin/forever --pidFile .pid stop ./node_modules/nodemon/nodemon.js --exitcrash ./bin/superforker.coffee stop",
     "test": "make test",
     "predeploy": "",
     "postdeploy": ""

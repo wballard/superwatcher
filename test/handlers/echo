@@ -13,3 +13,4 @@ if [ "${METHOD}" == "POST" ]; then
     echo ""
     echo "</stdin> **********************************"
 fi
+echo $@

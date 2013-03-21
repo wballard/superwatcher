@@ -44,9 +44,10 @@ verbs =
         io = require('socket.io').listen(server)
         error_count = 0
         cwd = process.cwd()
-        setup_environment = (request, method, environment={}) ->
+        #big block of
+        setup_environment = (request, environment={}) ->
             environment =
-                METHOD: method
+                METHOD: request.method
                 PATH_INFO: request.path
                 SCRIPT_NAME: path.basename(request.path)
                 SERVER_PORT: options.PORT
@@ -64,12 +65,21 @@ verbs =
             process.stderr.write errorString
             process.stderr.write "\n"
             response.status(500).end errorString
-        app.get '/*', (request, response) ->
+        #this is our big bad forker
+        runIt = (request, response, callback) ->
             toRun = path.join cwd, request.path
             response.set 'Content-Type', 'application/json'
             child_options =
-              env: setup_environment(request, 'GET', {})
-            child_process.execFile toRun, child_options, (error, stdout, stderr) ->
+              env: setup_environment(request, {})
+            #turn query parameters
+            args = []
+            for name, value of request.query
+                args.push "--#{name}", "#{value}"
+            child_process.execFile toRun, args, child_options, callback
+        #GET doesn't need to hook up the stdin, it just forks and
+        #writes back out
+        app.get '/*', (request, response) ->
+            runIt request, response, (error, stdout, stderr) ->
                 if error
                     handleError response, error, stdout, stderr
                 else
@@ -82,11 +92,7 @@ verbs =
                     process.stderr.write stderr
         #POST is a lot like GET, but we don't repeat the comments
         app.post '/*', (request, response) ->
-            toRun = path.join cwd, request.path
-            response.set 'Content-Type', 'application/json'
-            child_options =
-              env: setup_environment(request, 'POST', {})
-            childProcess = child_process.execFile toRun, child_options, (error, stdout, stderr) ->
+            childProcess = runIt request, response, (error, stdout, stderr) ->
                 if error
                     handleError response, error, stdout, stderr
                 else

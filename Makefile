@@ -4,7 +4,7 @@ CURL ?= curl --silent
 .PHONY: test
 
 test: 
-	$(MAKE)	works_at_all works_with_switches
+	$(MAKE)	works_at_all works_with_switches works_with_sockets
 
 works_at_all:
 	$(CURL) "http://localhost:8080/test/handlers/echo" > test/$@.tmp
@@ -15,5 +15,7 @@ works_with_switches:
 	$(DIFF) test/$@.tmp test/$@.expected
 
 works_with_sockets:
-	DEBUG='-*' echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'})" \
-	| ./bin/superforker.coffee poke
+	echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'})" \
+	| ./bin/superforker.coffee poke \
+	> test/$@.tmp
+	$(DIFF) test/$@.tmp test/$@.expected

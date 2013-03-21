@@ -1,0 +1,14 @@
+:)''
+:)cya
+reploy to poke {'message': 'I am alive!'}
+there should be no line above that starts with stderr:
+PATH_INFO:       /test/handlers/echo
+METHOD:          SOCKETIO
+SCRIPT_NAME:     echo
+SERVER_PORT:     8080
+SERVER_NAME:     
+<stdin> **********************************
+{"a":"b"}
+</stdin> **********************************
+
+

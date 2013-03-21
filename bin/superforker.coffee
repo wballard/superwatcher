@@ -178,10 +178,12 @@ verbs =
         #use this for self test
         poker.context.test = (host, port, name, content) ->
             socket = io_client.connect("http://#{host}:#{port}")
-            socket.on 'connecthhh', ->
+            socket.on 'connect', ->
                 socket.emit name, content, (reply) ->
                     console.log "reploy to poke #{reply}"
                     process.exit()
+            ''
+
 #
 for verb, __ of options
     if verbs[verb] and options[verb]

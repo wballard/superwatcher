@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 #lets ask forever if stuff is running from this directory
 RUNNING=`./node_modules/forever/bin/forever list | grep "$(PWD)"`
+WATCHDOG=`crontab -l | grep "$(PWD)"`
+
 if [[ -z "$RUNNING" ]]; then
     $(PWD)/node_modules/forever/bin/forever start --append -l forever.log -o out.log -e err.log --watch --watchDirectory $(PWD)/bin -c $(PWD)/node_modules/coffee-script/bin/coffee $(PWD)/bin/superforker.coffee start --root $(PWD)
+fi
+if [[ -z "$WATCHDOG" ]]; then
+  printf "Adding a watchdog"
+  crontab -l > crontemp
+  printf "* * * * *\tbash --login -c 'cd $(PWD); npm start > $(PWD)/watchdog.log 2>&1' \n" >> crontemp
+  cat crontemp | crontab
+  rm crontemp
 fi

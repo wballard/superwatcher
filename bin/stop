@@ -1,2 +1,7 @@
 #!/usr/bin/env bash
 $(PWD)/node_modules/forever/bin/forever stop $(PWD)/bin/superforker.coffee
+WATCHDOG=`crontab -l | grep "$(PWD)"`
+if [[ -n "$WATCHDOG" ]]; then
+  printf "Removing the watchdog"
+  crontab -l | grep -v "$(PWD)" | crontab
+fi

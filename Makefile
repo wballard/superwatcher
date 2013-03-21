@@ -14,3 +14,6 @@ works_with_switches:
 	$(CURL) "http://localhost:8080/test/handlers/echo?pantalones=conqueso&smurfs=hat&pantalones=diablo" > test/$@.tmp
 	$(DIFF) test/$@.tmp test/$@.expected
 
+works_with_sockets:
+	DEBUG='-*' echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'})" \
+	| ./bin/superforker.coffee poke

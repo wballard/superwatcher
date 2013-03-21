@@ -11,6 +11,7 @@
     "express": "",
     "docopt": "",
     "nodemon": "",
+    "debug": "",
     "forever": ""
   },
   "engine": {

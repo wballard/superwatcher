@@ -6,6 +6,7 @@
   "dependencies": {
     "chokidar": "",
     "socket.io": "",
+    "socket.io-client": "",
     "coffee-script": "",
     "express": "",
     "docopt": "",

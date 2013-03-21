@@ -88,20 +88,20 @@ block and wait for a response. So we're provided a handy command line
 tool to let you poke at the server. It uses socket.io under the hood.
 
 ```
-superforker poke http://localhost:8080
+superforker poke
 ```
 
 This gives you a really simple REPL shell. It's a shell, but messagse can
 come in any time from the server.
 
 ```
-> pants
+> send('pants')
 ```
 
 And, it'll talk back. It does that.
 
 ```
-< pants 
+< recv() 
 Pants
 ```
 

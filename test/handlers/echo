@@ -7,7 +7,7 @@ echo "METHOD:          ${METHOD}"
 echo "SCRIPT_NAME:     ${SCRIPT_NAME}"
 echo "SERVER_PORT:     ${SERVER_PORT}"
 echo "SERVER_NAME:     ${SERVER_NAME}"
-if [ "${METHOD}" == "POST" ]; then
+if [ "${READ_STDIN}" == "TRUE" ]; then
     echo "<stdin> **********************************"
     cat /dev/fd/0 
     echo ""

@@ -17,11 +17,17 @@ Arguments:
 path = require 'path'
 crypto = require 'crypto'
 child_process = require 'child_process'
+repl = require 'repl'
+io_client = require 'socket.io-client'
+io = require 'socket.io'
+url = require 'url'
+
+DEFAULT_PORT = '8080'
 
 options = docopt(doc)
 
 #docopt doesn't quite understand defaults for positionals
-options.PORT = options.PORT or '8080'
+options.PORT = options.PORT or DEFAULT_PORT
 
 console.log options
 
@@ -41,7 +47,7 @@ verbs =
         #fire up express with socket io
         app = require('express')()
         server = require('http').createServer(app)
-        io = require('socket.io').listen(server)
+        io = io.listen(server)
         error_count = 0
         cwd = process.cwd()
         #big block of
@@ -52,6 +58,11 @@ verbs =
                 SCRIPT_NAME: path.basename(request.path)
                 SERVER_PORT: options.PORT
                 SERVER_NAME: request.host
+            if request.method is 'POST' or request.content
+                environment.READ_STDIN = "TRUE"
+            else
+                environment.READ_STDIN = "FALSE"
+            environment
         #running of commands via GET, nothing is routed to STDIN
         handleError = (response, error, stdout, stderr) ->
             #big old error object in a JSON ball
@@ -64,7 +75,11 @@ verbs =
             #for out own output so we can sweep this up in server logs
             process.stderr.write errorString
             process.stderr.write "\n"
-            response.status(500).end errorString
+            #tiny bit different if raw http or socketio
+            if response.socketio
+                response.status(500).end error
+            else
+                response.status(500).end errorString
         #this is our big bad forker
         runIt = (request, response, callback) ->
             toRun = path.join cwd, request.path
@@ -98,16 +113,78 @@ verbs =
                 else
                     process.stderr.write stderr
                     response.end(stdout)
+            childProcess.stdin.on 'error', ->
+                console.log arguments
             #stream along the body
             request.on 'data', (chunk) ->
                 childProcess.stdin.write chunk
             request.on 'end', ->
                 childProcess.stdin.end()
+        #ultra wildcard message listening
+        io.on 'connection', (socket) ->
+            socket.$emit = (name, content, ack) ->
+                parsed = url.parse(name)
+                #fake http request
+                request =
+                    method: 'SOCKETIO'
+                    path: parsed.pathname
+                    query: parsed.query
+                    host: ''
+                    content: content
+                #fake http reponse
+                response =
+                    socketio: true
+                    code: 200
+                    set: ->
+                    status: (code) ->
+                        response.code = code
+                        response
+                    end: (stuff) ->
+                        if ack
+                            ack(stuff)
+                        else
+                            socket.emit name, stuff
+                #fork and work
+                childProcess = runIt request, response, (error, stdout, stderr) ->
+                    if error
+                        handleError response, error, stdout, stderr
+                    else
+                        process.stderr.write stderr
+                        response.end(stdout)
+                if content
+                    childProcess.stdin.on 'error', ->
+                        console.log arguments
+                    childProcess.stdin.end JSON.stringify(content)
         io.set 'log level', 0
         server.listen options.PORT
     stop: () ->
     poke: () ->
-
+        #this starts up a command line repl, so there are 'sub verbs in here'
+        socket = null
+        #and here we start
+        poker = repl.start
+            prompt: ":)"
+            input: process.stdin
+            output: process.stdout
+        .on 'exit', ->
+            console.log 'cya'
+        poker.context.connect = (host, port) ->
+            socket = io_client.connect("http://#{host}:#{port}")
+            socket.on 'connect', ->
+                console.log "connected #{host}:#{port}"
+                socket.emit '/pants?a=b', {dog: 1}, ->
+                    console.log 'heard back', arguments
+                socket.emit '/pants?a=b', {dog: 1}
+                socket.emit '/pants?a=b'
+                socket.emit '/test/handlers/echo'
+                socket.emit '/test/handlers/echo', {der: 'echole'}
+                socket.on '/test/handlers/echo', ->
+                    console.log 'eck hole', arguments
+                socket.on '/pants?a=b', ->
+                    console.log 'yep yep', arguments
+        #initial connection
+        poker.context.connect("localhost", DEFAULT_PORT)
+#
 for verb, __ of options
-    if verbs[verb]
+    if verbs[verb] #and options[verb]
         verbs[verb]()

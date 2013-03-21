@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+$(PWD)/node_modules/forever/bin/forever stop $(PWD)/bin/superforker.coffee

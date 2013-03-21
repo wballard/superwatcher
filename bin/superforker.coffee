@@ -5,9 +5,12 @@ doc = """
 Superforker!
 
 Usage:
-    superforker start [PORT]
+    superforker start [PORT] [--root=<root>]
     superforker stop
     superforker poke
+
+Options:
+    --root=<root>    Root directory, forked processes are relative to this.
 
 Arguments:
     PORT  TCP port, serves HTTP and socket IO here [default: 8080]
@@ -47,7 +50,7 @@ verbs =
         server = require('http').createServer(app)
         io = io.listen(server)
         error_count = 0
-        cwd = process.cwd()
+        cwd = options['--root'] or process.cwd()
         #big block of
         setup_environment = (request, environment={}) ->
             environment =
@@ -81,6 +84,7 @@ verbs =
         #this is our big bad forker
         runIt = (request, response, callback) ->
             toRun = path.join cwd, request.path
+            console.log toRun, process.cwd()
             response.set 'Content-Type', 'application/json'
             child_options =
               env: setup_environment(request, {})

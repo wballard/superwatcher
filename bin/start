@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#lets ask forever if stuff is running from this directory
+RUNNING=`./node_modules/forever/bin/forever list | grep "$(PWD)"`
+if [[ -z "$RUNNING" ]]; then
+    $(PWD)/node_modules/forever/bin/forever start --append -l forever.log -o out.log -e err.log --watch --watchDirectory $(PWD)/bin -c $(PWD)/node_modules/coffee-script/bin/coffee $(PWD)/bin/superforker.coffee start --root $(PWD)
+fi

@@ -7,6 +7,8 @@ CURRENT_NODE_VERSION=`node --version`
 NEEDED_NODE_VERSION='v0.8.22'
 
 if [[ "$CURRENT_NODE_VERSION" != "$NEEDED_NODE_VERSION" ]]; then
+  echo 'Current Version ' $CURRENT_NODE_VERSION
+  echo 'Needed Version ' $NEEDED_NODE_VERSION
   echo 'get the right version of node going'
   nvm install $NEEDED_NODE_VERSION
   nvm use $NEEDED_NODE_VERSION

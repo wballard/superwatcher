@@ -51,23 +51,12 @@ Superforker runs in a directory, its cwd. Make a directory, go there,
 and:
 
 ```
-npm install superforker
+npm install superforker -g
 ```
 
 Now you have the superforker, tucked up in your `node_modules`. It's not
-set up to do anything useful yet, but it exists. Superforker handlers
-are just any executable script, so let's make one and do some handling.
+set up to do anything useful yet, but it exists. 
 
-By convention, all the
-commands it runs are relative to this directory. In practice this means
-you do one of two things to deploy a server:
-
-* make git submodules in a directory to pull in other sets of commands
-* symlink like a fiend to pull things into your namespace
-
-This is to avoid the need to _configure a root directory_, and also has
-the benefit of keeping you from running any old command in `bin` -- like
-our friend `rm` for example.
 
 ## Testing ##
 Here is the trick. Run your command line program. Pipe in the input you
@@ -77,7 +66,7 @@ and output.
 ## Events ##
 In addition to running commands for you, superforker will give you file
 change events. This fits with how we like to program, shell-inspired,
-where each user has a home directory in which we can write them messages
+[[where]] each user has a home directory in which we can write them messages
 and data in simple files.
 
 To use this, just connect socket.io to

@@ -16,7 +16,7 @@ works_with_switches:
 
 works_with_sockets:
 	echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'})" \
-	| ./bin/superforker.coffee poke \
+	| ./bin/poke \
 	> test/$@.tmp
 	$(DIFF) test/$@.tmp test/$@.expected
 

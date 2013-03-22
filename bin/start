@@ -10,7 +10,7 @@ LOG_DIR=${ROOT}/var/log
 mkdir -p ${LOG_DIR}
 
 if [[ -z "${RUNNING}" ]]; then
-  ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${PWD}/bin -c ${PWD}/node_modules/coffee-script/bin/coffee ${PWD}/bin/superforker.coffee start --root ${ROOT}
+  ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${PWD}/bin -c ${PWD}/node_modules/coffee-script/bin/coffee ${PWD}/bin/server start --root ${ROOT}
 fi
 if [[ -z "${WATCHDOG}" ]]; then
   echo "Adding a watchdog"

@@ -1,0 +1,43 @@
+#!/usr/bin/env ./node_modules/coffee-script/bin/coffee
+# vim: set syntax=coffee:
+doc = """
+Superforker Poke! The Superpoker!
+
+Usage:
+    poke
+
+"""
+{docopt} = require 'docopt'
+repl = require 'repl'
+io_client = require 'socket.io-client'
+util = require 'util'
+
+options = docopt(doc)
+
+do () ->
+    #this starts up a command line repl, so there are 'sub verbs in here'
+    socket = null
+    #and here we start
+    poker = repl.start
+        prompt: ":)"
+        input: process.stdin
+        output: process.stdout
+    .on 'exit', ->
+        console.log 'cya'
+    #hook on up
+    poker.context.connect = (host, port) ->
+        socket = io_client.connect("http://#{host}:#{port}")
+        socket.on 'connect', ->
+            util.log "connected #{host}:#{port}"
+    #send a message if already connected
+    poker.context.send = (name, content) ->
+        socket.emit name, content, (reply) ->
+            util.log "reply: #{reply}"
+    #use this for self test
+    poker.context.test = (host, port, name, content) ->
+        socket = io_client.connect("http://#{host}:#{port}")
+        socket.on 'connect', ->
+            socket.emit name, content, (reply) ->
+                console.log "reply to poke #{reply}"
+                process.exit()
+        ''

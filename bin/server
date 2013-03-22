@@ -2,12 +2,11 @@
 # vim: set syntax=coffee:
 
 doc = """
-Superforker!
+Superforker Server!
 
 Usage:
-    superforker start [PORT] [--root=<root>]
-    superforker stop
-    superforker poke
+    server start [PORT] [--root=<root>]
+    server stop
 
 Options:
     --root=<root>    Root directory, forked processes are relative to this.
@@ -161,33 +160,6 @@ verbs =
         io.set 'log level', 0
         server.listen options.PORT
     stop: () ->
-    poke: () ->
-        #this starts up a command line repl, so there are 'sub verbs in here'
-        socket = null
-        #and here we start
-        poker = repl.start
-            prompt: ":)"
-            input: process.stdin
-            output: process.stdout
-        .on 'exit', ->
-            console.log 'cya'
-        #hook on up
-        poker.context.connect = (host, port) ->
-            socket = io_client.connect("http://#{host}:#{port}")
-            socket.on 'connect', ->
-                util.log "connected #{host}:#{port}"
-        #send a message if already connected
-        poker.context.send = (name, content) ->
-            socket.emit name, content, (reply) ->
-                util.log "reply: #{reply}"
-        #use this for self test
-        poker.context.test = (host, port, name, content) ->
-            socket = io_client.connect("http://#{host}:#{port}")
-            socket.on 'connect', ->
-                socket.emit name, content, (reply) ->
-                    console.log "reply to poke #{reply}"
-                    process.exit()
-            ''
 
 #
 for verb, __ of options

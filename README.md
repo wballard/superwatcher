@@ -47,7 +47,18 @@ The server is a node.js program, with socket.io, providing both the
 server and client library.
 
 ## Setup ##
-Superforker runs in a directory, its cwd. By convention, all the
+Superforker runs in a directory, its cwd. Make a directory, go there,
+and:
+
+```
+npm install superforker
+```
+
+Now you have the superforker, tucked up in your `node_modules`. It's not
+set up to do anything useful yet, but it exists. Superforker handlers
+are just any executable script, so let's make one and do some handling.
+
+By convention, all the
 commands it runs are relative to this directory. In practice this means
 you do one of two things to deploy a server:
 

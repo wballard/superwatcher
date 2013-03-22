@@ -7,7 +7,7 @@ CURRENT_NODE_VERSION=`node --version`
 NEEDED_NODE_VERSION='v0.8.22'
 HAS_NEEDED_VERSION=`nvm ls | grep ${NEEDED_NODE_VERSION}`
 
-if [[ -z "${HAS_NEEDED_VERSION}" ]]; then
+if [ -z "${HAS_NEEDED_VERSION}" ]; then
   echo 'get the right version of node going'
   nvm install $NEEDED_NODE_VERSION
   npm update
@@ -20,3 +20,8 @@ cd "$DIR/.."
 export ROOT=${PWD}
 #self update, make sure all our needed packages are in place
 npm install
+
+#source any included environment if present
+if [ -e ./etc/environment/environment ]; then
+  source ./etc/environment/environment
+fi

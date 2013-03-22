@@ -145,9 +145,15 @@ verbs =
                         response
                     end: (stuff) ->
                         if ack
-                            ack(stuff)
+                            try
+                                ack(JSON.parse(stuff))
+                            catch error
+                                ack(stuff)
                         else
-                            socket.emit name, stuff
+                            try
+                                socket.emit name, JSON.parse(stuff)
+                            catch error
+                                socket.emit name, stuff
                 #fork and work
                 childProcess = runIt request, response, (error, stdout, stderr) ->
                     if error

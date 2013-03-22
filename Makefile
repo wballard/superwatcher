@@ -26,3 +26,6 @@ start:
 stop:
 	./bin/stop
 
+watchdog:
+	$(MAKE) start
+

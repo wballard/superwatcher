@@ -1,6 +1,6 @@
 :)''
 :)cya
-reploy to poke {'message': 'I am alive!'}
+reply to poke {'message': 'I am alive!'}
 there should be no line above that starts with stderr:
 PATH_INFO:       /test/handlers/echo
 METHOD:          SOCKETIO

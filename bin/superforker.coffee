@@ -24,6 +24,7 @@ repl = require 'repl'
 io_client = require 'socket.io-client'
 io = require 'socket.io'
 url = require 'url'
+util = require 'util'
 
 DEFAULT_PORT = '8080'
 
@@ -84,7 +85,7 @@ verbs =
         #this is our big bad forker
         runIt = (request, response, callback) ->
             toRun = path.join cwd, request.path
-            console.log toRun, process.cwd()
+            util.log toRun, process.cwd()
             response.set 'Content-Type', 'application/json'
             child_options =
               env: setup_environment(request, {})
@@ -116,7 +117,7 @@ verbs =
                     process.stderr.write stderr
                     response.end(stdout)
             childProcess.stdin.on 'error', ->
-                console.log "error on stdin #{arguments}"
+                util.log "error on stdin #{arguments}"
             #stream along the body
             request.on 'data', (chunk) ->
                 childProcess.stdin.write chunk
@@ -155,7 +156,7 @@ verbs =
                         response.end(stdout)
                 if content
                     childProcess.stdin.on 'error', ->
-                        console.log "error on stdin #{arguments}"
+                        util.log "error on stdin #{arguments}"
                     childProcess.stdin.end JSON.stringify(content)
         io.set 'log level', 0
         server.listen options.PORT
@@ -174,17 +175,17 @@ verbs =
         poker.context.connect = (host, port) ->
             socket = io_client.connect("http://#{host}:#{port}")
             socket.on 'connect', ->
-                console.log "connected #{host}:#{port}"
+                util.log "connected #{host}:#{port}"
         #send a message if already connected
         poker.context.send = (name, content) ->
             socket.emit name, content, (reply) ->
-                console.log "reply: #{reply}"
+                util.log "reply: #{reply}"
         #use this for self test
         poker.context.test = (host, port, name, content) ->
             socket = io_client.connect("http://#{host}:#{port}")
             socket.on 'connect', ->
                 socket.emit name, content, (reply) ->
-                    console.log "reploy to poke #{reply}"
+                    console.log "reply to poke #{reply}"
                     process.exit()
             ''
 

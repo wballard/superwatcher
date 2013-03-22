@@ -8,5 +8,7 @@ if [ $? == 100 ]; then
   ./bin/stop
 fi
 
+./bin/update_repo_as_needed ./etc/handlers
+
 #call into the start, it's safe to call if we are already started, we promise
 ./bin/start

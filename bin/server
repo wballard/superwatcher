@@ -51,6 +51,7 @@ verbs =
         io = io.listen(server)
         error_count = 0
         cwd = options['--root'] or process.cwd()
+        util.log "serving handlers from #{cwd}"
         #big block of
         setup_environment = (request, environment={}) ->
             environment =

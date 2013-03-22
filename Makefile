@@ -21,8 +21,8 @@ works_with_sockets:
 	$(DIFF) test/$@.tmp test/$@.expected
 
 start:
-	./bin/start $(PWD)
+	./bin/start
 
 stop:
-	./bin/stop $(PWD)
+	./bin/stop
 

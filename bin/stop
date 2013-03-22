@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-$(PWD)/node_modules/forever/bin/forever stop $(PWD)/bin/superforker.coffee
-WATCHDOG=`crontab -l | grep "$(PWD)"`
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR/.environment"
+#have forever stop the madness, and remove the watchdog cron job
+${ROOT}/node_modules/forever/bin/forever stop ${ROOT}/bin/superforker.coffee
+WATCHDOG=`crontab -l | grep "${ROOT}"`
 if [[ -n "$WATCHDOG" ]]; then
   printf "Removing the watchdog"
-  crontab -l | grep -v "$(PWD)" | crontab
+  crontab -l | grep -v "${ROOT}" | crontab
 fi

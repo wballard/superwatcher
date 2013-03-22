@@ -1,0 +1,19 @@
+#vim: ft=bash
+#Set up what we expect to have a good superforker environment. This is used from
+#start and stop before the first fork
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CURRENT_NODE_VERSION=`node --version`
+NEEDED_NODE_VERSION='v0.8.11'
+
+if [[ "$CURRENT_NODE_VERSION" != "$NEEDED_NODE_VERSION" ]]; then
+  echo 'get the right version of node going'
+  nvm install $NEEDED_NODE_VERSION
+  nvm use $NEEDED_NODE_VERSION
+  npm update
+fi
+
+#get in the right directory, meaning the root of this project
+cd "$DIR/.."
+export ROOT=`pwd`
+#self update, make sure all our needed packages are in place
+npm install

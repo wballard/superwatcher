@@ -16,8 +16,8 @@
     "node": "0.8.11"
   },
   "scripts": {
-    "start": "./bin/start $(PWD)",
-    "stop": "./bin/stop $(PWD)",
+    "start": "make start",
+    "stop": "make stop",
     "test": "make test",
     "predeploy": "",
     "postdeploy": ""

@@ -19,3 +19,10 @@ works_with_sockets:
 	| ./bin/superforker.coffee poke \
 	> test/$@.tmp
 	$(DIFF) test/$@.tmp test/$@.expected
+
+start:
+	./bin/start $(PWD)
+
+stop:
+	./bin/stop $(PWD)
+

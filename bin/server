@@ -24,6 +24,7 @@ io_client = require 'socket.io-client'
 io = require 'socket.io'
 url = require 'url'
 util = require 'util'
+_ = require 'underscore'
 
 DEFAULT_PORT = '8080'
 
@@ -64,7 +65,7 @@ verbs =
                 environment.READ_STDIN = "TRUE"
             else
                 environment.READ_STDIN = "FALSE"
-            environment
+            _.extend {}, process.env, environment
         #running of commands via GET, nothing is routed to STDIN
         handleError = (response, error, stdout, stderr) ->
             #big old error object in a JSON ball

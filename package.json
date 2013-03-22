@@ -10,7 +10,8 @@
     "coffee-script": "",
     "express": "",
     "docopt": "",
-    "forever": ""
+    "forever": "",
+    "underscore": ""
   },
   "engine": {
     "node": "0.8.11"

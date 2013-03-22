@@ -15,7 +15,7 @@ fi
 if [[ -z "${WATCHDOG}" ]]; then
   echo "Adding a watchdog"
   crontab -l > crontemp
-  printf "* * * * *\tcd "${ROOT}"; make start > ${LOG_DIR}/watchdog.log 2>&1' \n" >> crontemp
+  printf "* * * * *\tcd "${ROOT}"; make start > ${LOG_DIR}/watchdog.log 2>&1\n" >> crontemp
   cat crontemp | crontab
   rm crontemp
 fi

@@ -27,5 +27,5 @@ stop:
 	./bin/stop
 
 watchdog:
-	$(MAKE) start
+	./bin/watchdog
 

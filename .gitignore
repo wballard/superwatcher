@@ -3,3 +3,4 @@ test/*.tmp
 service.pid
 *.log
 bin/v0.8.22
+etc

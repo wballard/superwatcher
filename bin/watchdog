@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+#make sure our exciting environment repository is up to date, and if it changed
+#then we are going to need to restart
+./bin/update_repo_as_needed ./etc/environment
+if [ $? == 100 ]; then
+  echo "environment changed, stopping the server to pick up the changes"
+  ./bin/stop
+fi
+
+#call into the start, it's safe to call if we are already started, we promise
+./bin/start

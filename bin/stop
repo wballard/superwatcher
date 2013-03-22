@@ -5,6 +5,6 @@ source "$DIR/.environment"
 ${ROOT}/node_modules/forever/bin/forever stop ${ROOT}/bin/superforker.coffee
 WATCHDOG=`crontab -l | grep "${ROOT}"`
 if [[ -n "$WATCHDOG" ]]; then
-  printf "Removing the watchdog"
+  echo "Removing the watchdog"
   crontab -l | grep -v "${ROOT}" | crontab
 fi

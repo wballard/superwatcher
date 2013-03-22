@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR/.environment"
 #lets ask forever if stuff is running from this directory
-RUNNING=`./node_modules/forever/bin/forever list | grep "${ROOT}"`
+RUNNING=`${ROOT}/node_modules/forever/bin/forever list | grep "${ROOT}"`
 WATCHDOG=`crontab -l | grep "${ROOT}"`
 LOG_DIR=${ROOT}/var/log
 
@@ -13,7 +13,7 @@ if [[ -z "${RUNNING}" ]]; then
   ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${PWD}/bin -c ${PWD}/node_modules/coffee-script/bin/coffee ${PWD}/bin/superforker.coffee start --root ${ROOT}
 fi
 if [[ -z "${WATCHDOG}" ]]; then
-  printf "Adding a watchdog"
+  echo "Adding a watchdog"
   crontab -l > crontemp
   printf "* * * * *\tcd "${ROOT}"; make start > ${LOG_DIR}/watchdog.log 2>&1' \n" >> crontemp
   cat crontemp | crontab

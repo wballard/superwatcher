@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 #lets ask forever if stuff is running from this directory
-RUNNING=`./node_modules/forever/bin/forever list | grep "$(PWD)"`
-WATCHDOG=`crontab -l | grep "$(PWD)"`
+RUNNING=`./node_modules/forever/bin/forever list | grep "${PWD}"`
+WATCHDOG=`crontab -l | grep "${PWD}"`
+LOG_DIR=${PWD}/var/log
 
-if [[ -z "$RUNNING" ]]; then
-    $(PWD)/node_modules/forever/bin/forever start --append -l forever.log -o out.log -e err.log --watch --watchDirectory $(PWD)/bin -c $(PWD)/node_modules/coffee-script/bin/coffee $(PWD)/bin/superforker.coffee start --root $(PWD)
+# a place for our logs, and everything in its place
+echo "LOG_DIR: ${LOG_DIR}"
+mkdir -p ${LOG_DIR}
+
+if [[ -z "${RUNNING}" ]]; then
+  ${PWD}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${PWD}/bin -c ${PWD}/node_modules/coffee-script/bin/coffee ${PWD}/bin/superforker.coffee start --root ${PWD}
 fi
-if [[ -z "$WATCHDOG" ]]; then
+if [[ -z "${WATCHDOG}" ]]; then
   printf "Adding a watchdog"
   crontab -l > crontemp
-  printf "* * * * *\tbash --login -c 'cd $(PWD); npm start > $(PWD)/watchdog.log 2>&1' \n" >> crontemp
+  printf "* * * * *\tbash --login -c 'cd ${PWD}; npm start > ${LOG_DIR}/watchdog.log 2>&1' \n" >> crontemp
   cat crontemp | crontab
   rm crontemp
 fi

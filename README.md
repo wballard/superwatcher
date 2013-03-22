@@ -58,56 +58,6 @@ This is to avoid the need to _configure a root directory_, and also has
 the benefit of keeping you from running any old command in `bin` -- like
 our friend `rm` for example.
 
-### Example ###
-So, finally, after all this text...
-
-```
-npm install superforker
-npm start superforker
-```
-
-Now you are running, put it in the background.
-In the same directory, make a shell script:
-
-```
-#!/usr/bin/env bash
-echo Pants
-```
-
-save it to a file, I like the name `pants`. Now, the magic:
-
-```
-curl http://localhost:8080/pants
-```
-
-Should, unshockingly give you **Pants**.
-
-
-Now, socket.io is a bit more complex, in that you don't just get to
-block and wait for a response. So we're provided a handy command line
-tool to let you poke at the server. It uses socket.io under the hood.
-
-```
-superforker poke
-```
-
-This gives you a really simple REPL shell. It's a shell, but messagse can
-come in any time from the server.
-
-```
-> send('pants')
-```
-
-And, it'll talk back. It does that.
-
-```
-< recv() 
-Pants
-```
-
-So, what's going on? Superforker is taking the `cwd`, and tacking on
-`/pants`, running it, then streaming the message back.
-
 ## Testing ##
 Here is the trick. Run your command line program. Pipe in the input you
 want, assert the output. Done. We tend to use `diff`, saving the input

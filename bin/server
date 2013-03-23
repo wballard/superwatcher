@@ -142,6 +142,7 @@ verbs =
                     socketio: true
                     code: 200
                     set: ->
+                    setHeader: ->
                     status: (code) ->
                         response.code = code
                         response

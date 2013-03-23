@@ -18,10 +18,14 @@ nvm use $NEEDED_NODE_VERSION
 #get in the right directory, meaning the root of this project
 cd "$DIR/.."
 export ROOT=${PWD}
+export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 #self update, make sure all our needed packages are in place
 npm install
 
 #source any included environment if present
 if [ -e ./etc/environment/environment ]; then
   source ./etc/environment/environment
+	pushd ./etc/environment
+	export ENVIRONMENT_SHA=`git log -1 --oneline | awk '{ print $1 }'`
+	popd
 fi

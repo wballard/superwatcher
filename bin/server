@@ -88,6 +88,8 @@ verbs =
             toRun = path.join cwd, request.path
             util.log toRun, process.cwd()
             response.set 'Content-Type', 'application/json'
+            response.setHeader "X-FORKER-VERSION", process.env.FORKER_SHA
+            response.setHeader "X-ENV-VERSION", process.env.ENVIRONMENT_SHA
             child_options =
               env: setup_environment(request, {})
             #turn query parameters

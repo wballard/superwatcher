@@ -8,9 +8,9 @@ NEEDED_NODE_VERSION='v0.10.3'
 HAS_NEEDED_VERSION=`nvm ls | grep ${NEEDED_NODE_VERSION}`
 
 if [ -z "${HAS_NEEDED_VERSION}" ]; then
-    echo 'get the right version of node going'
-    nvm install $NEEDED_NODE_VERSION
-    npm update
+  echo 'get the right version of node going'
+  nvm install $NEEDED_NODE_VERSION
+  npm update
 fi
 
 nvm use $NEEDED_NODE_VERSION
@@ -29,7 +29,7 @@ npm install
 
 #source any included environment if present
 if [ -e ${ROOT}/etc/environment/environment ]; then
-    source ${ROOT}/etc/environment/environment
+  source ${ROOT}/etc/environment/environment
 	pushd ${ROOT}/etc/environment
 	export ENVIRONMENT_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 	popd

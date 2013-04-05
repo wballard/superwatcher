@@ -2,19 +2,22 @@
 #Set up what we expect to have a good superforker environment. This is used from
 #start and stop before the first fork
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${DIR}/nvm.sh"
+source "${DIR}/nvm/nvm.sh"
 CURRENT_NODE_VERSION=`node --version`
-NEEDED_NODE_VERSION='v0.8.22'
+NEEDED_NODE_VERSION='v0.10.3'
 HAS_NEEDED_VERSION=`nvm ls | grep ${NEEDED_NODE_VERSION}`
 
 if [ -z "${HAS_NEEDED_VERSION}" ]; then
-  echo 'get the right version of node going'
-  nvm install $NEEDED_NODE_VERSION
-  npm update
+    echo 'get the right version of node going'
+    nvm install $NEEDED_NODE_VERSION
+    npm update
 fi
 
 nvm use $NEEDED_NODE_VERSION
 
+#BIN is...
+cd "$DIR"
+export BIN=${PWD}
 #get in the right directory, meaning the root of this project
 cd "$DIR/.."
 export ROOT=${PWD}
@@ -25,9 +28,9 @@ export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 npm install
 
 #source any included environment if present
-if [ -e ./etc/environment/environment ]; then
-  source ./etc/environment/environment
-	pushd ./etc/environment
+if [ -e ${ROOT}/etc/environment/environment ]; then
+    source ${ROOT}/etc/environment/environment
+	pushd ${ROOT}/etc/environment
 	export ENVIRONMENT_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 	popd
 fi

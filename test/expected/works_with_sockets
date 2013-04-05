@@ -2,7 +2,7 @@
 :)cya
 reply to poke {'message': 'I am alive!'}
 there should be no line above that starts with stderr:
-PATH_INFO:       /test/handlers/echo
+PATH_INFO:       /echo
 SCRIPT_NAME:     echo
 <stdin> **********************************
 {"a":"b"}

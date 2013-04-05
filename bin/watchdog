@@ -6,7 +6,7 @@ source "$DIR/environment"
 ./bin/update_repo_as_needed ./etc/environment
 if [ $? == 100 ]; then
   echo "environment changed, stopping the server to pick up the changes"
-  ./bin/stop
+  $DIR/stop
 fi
 
 ./bin/update_repo_as_needed ./etc/handlers
@@ -20,4 +20,4 @@ if [ $? == 100 ]; then
 fi
 
 #call into the start, it's safe to call if we are already started, we promise
-./bin/start
+$DIR/start

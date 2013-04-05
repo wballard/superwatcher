@@ -8,7 +8,7 @@ test:
 
 
 works_with_sockets:
-	echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'}, ['arg1', 'arg2'])" \
+	echo "test('localhost', 8080, '/echo', {'a': 'b'}, ['arg1', 'arg2'])" \
 	| ./bin/poke \
 	| tee /tmp/$@
 	$(DIFF) /tmp/$@ test/expected/$@

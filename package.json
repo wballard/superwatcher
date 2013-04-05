@@ -21,5 +21,8 @@
     "start": "make start",
     "stop": "make stop",
     "test": "make test"
+  },
+  "bin": {
+    "superforker": "./bin/superforker"
   }
 }

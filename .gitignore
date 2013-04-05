@@ -1,6 +1,6 @@
 node_modules
 service.pid
 *.log
-bin/nvm
+bin/nvm/v*
 etc
 var

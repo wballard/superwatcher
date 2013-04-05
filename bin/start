@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR/environment"
 #lets ask forever if stuff is running from this directory
-RUNNING=`${ROOT}/node_modules/forever/bin/forever list | grep "${ROOT}"`
+RUNNING=`forever list | grep "${ROOT}"`
 WATCHDOG=`crontab -l | grep "${ROOT}"`
 
 # a place for our logs, and everything in its place
@@ -14,11 +14,7 @@ if [[ -z "${RUNNING}" ]]; then
   if [ -e ${ETC_DIR}/environment/before_start ]; then
     ${ETC_DIR}/environment/before_start
   fi
-  HANDLE_THIS=${ROOT}
-  if [ -e ${ETC_DIR}/handlers ]; then
-    HANDLE_THIS=${ETC_DIR}/handlers
-  fi
-  ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${ROOT}/src ${BIN}/superforker serve ${PORT} --root ${HANDLE_THIS}
+  forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${ROOT}/src ${BIN}/serve ${PORT} ${HANDLE_THIS}
 fi
 
 #and put in a watchdog cron task to keep everything working

@@ -3,6 +3,25 @@
 #start and stop before the first fork
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+#use the node we insist on
+export NVM_DIR=""
+source "${DIR}/nvm/nvm.sh"
+NEEDED_NODE_VERSION='v0.10.3'
+HAS_NEEDED_VERSION=`nvm ls | grep ${NEEDED_NODE_VERSION}`
+
+if [ -z "${HAS_NEEDED_VERSION}" ]; then
+  echo 'get the right version of node going'
+  nvm install $NEEDED_NODE_VERSION
+  npm update
+fi
+
+nvm use $NEEDED_NODE_VERSION
+which node
+npm install .
+HAS_FOREVER=`which forever`
+if [ -z "${HAS_FOREVER}" ]; then
+  npm install -g forever
+fi
 #BIN is...
 cd "$DIR"
 export BIN=${PWD}
@@ -12,8 +31,11 @@ export ROOT=${PWD}
 export LOG_DIR=${ROOT}/var/log
 export ETC_DIR=${ROOT}/etc
 export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
-#self update, make sure all our needed packages are in place
-npm install
+export PORT=8080
+export HANDLE_THIS=${ROOT}
+if [ -e ${ETC_DIR}/handlers ]; then
+  HANDLE_THIS=${ETC_DIR}/handlers
+fi
 
 #source any included environment if present
 if [ -e ${ROOT}/etc/environment/environment ]; then

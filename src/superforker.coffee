@@ -15,7 +15,6 @@ Arguments:
     PORT  TCP port, serves HTTP and socket IO here [default: 8080]
 """
 
-server = require '../src/server'
 require('shellscript').globalize()
 
 DEFAULT_PORT = '8080'

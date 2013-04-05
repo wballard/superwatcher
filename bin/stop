@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/.environment"
+source "$DIR/environment"
 #have forever stop the madness, and remove the watchdog cron job
 ${ROOT}/node_modules/forever/bin/forever stop ${ROOT}/bin/server
 WATCHDOG=`crontab -l | grep "${ROOT}"`

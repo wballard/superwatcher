@@ -19,8 +19,6 @@
   "scripts": {
     "start": "make start",
     "stop": "make stop",
-    "test": "make test",
-    "predeploy": "",
-    "postdeploy": ""
+    "test": "make test"
   }
 }

@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
-
+source "$DIR/environment"
 #make sure our exciting environment repository is up to date, and if it changed
 #then we are going to need to restart
 ./bin/update_repo_as_needed ./etc/environment
@@ -9,6 +9,14 @@ if [ $? == 100 ]; then
 fi
 
 ./bin/update_repo_as_needed ./etc/handlers
+if [ $? == 100 ]; then
+    echo "handlers changed, no need to stop and restart"
+    if [ -e ./etc/handlers/on_update ]; then
+        pushd ./etc/handlers
+        ./on_update
+        popd
+    fi
+fi
 
 #call into the start, it's safe to call if we are already started, we promise
 ./bin/start

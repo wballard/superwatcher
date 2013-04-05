@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$DIR/.environment"
+source "$DIR/environment"
 #lets ask forever if stuff is running from this directory
 RUNNING=`${ROOT}/node_modules/forever/bin/forever list | grep "${ROOT}"`
 WATCHDOG=`crontab -l | grep "${ROOT}"`
-LOG_DIR=${ROOT}/var/log
-ETC_DIR=${ROOT}/etc
 
 # a place for our logs, and everything in its place
 mkdir -p ${LOG_DIR}

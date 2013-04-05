@@ -21,56 +21,18 @@ freeing up that latency time to be invested in going framework free.
 Superforker connects Socket.IO to simple command line programs
 with the following protocol:
 
-* The _message name_ becomes the path to the command line program
-* The _message_ is written to the command line program STDIN
-* Environment variables matching CGI are supplied to the command line
+* You send a message called `exec`
+* It has properties `command`, `stdin`, and an array `args`
 program
 * STDOUT is captured and written back as a Socket.IO message
 * STDERR is captured and logged server side
 
-Superforker connect HTTP with the following protocol:
-
-* The _request path_ becomes the path to the command line program
-* The _request parameters_ are transformed into switches `--name=value`
-* The POST body is written to the command line program STDIN
-* Environment variables matching CGI are supplied to the command line
-program
-* STDOUT is captured and written back as the response
-* STDERR is captured and logged server side
-
 So, you just write a program, read STDIN, do stuff, write STDOUT. This
 bridges building HTTP APIs with simple shell programming. You an send
-any text you like.
+any text you like. If you send JSON, the server will respond with a
+message this is structured JSON, otherwise it'll be a string.
 
 # The Server #
 The server is a node.js program, with socket.io, providing both the
 server and client library.
 
-## Setup ##
-Superforker runs in a directory, its cwd. Make a directory, go there,
-and:
-
-```
-npm install superforker -g
-```
-
-Now you have the superforker, tucked up in your `node_modules`. It's not
-set up to do anything useful yet, but it exists. 
-
-
-## Testing ##
-Here is the trick. Run your command line program. Pipe in the input you
-want, assert the output. Done. We tend to use `diff`, saving the input
-and output. 
-
-## Events ##
-In addition to running commands for you, superforker will give you file
-change events. This fits with how we like to program, shell-inspired,
-where each user has a home directory in which we can write them messages
-and data in simple files.
-
-To use this, just connect socket.io to
-`http://[host]:[port]/watch/[directory]`. [directory] needs to be
-relative to superforker `cwd`. This will give you back an event on each
-file change, with the name of the file as the message, and a bit of
-metadata about the change, and a nice URL you can GET it from.

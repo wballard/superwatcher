@@ -2,7 +2,7 @@
 #Set up what we expect to have a good superforker environment. This is used from
 #start and stop before the first fork
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "${DIR}/.nvm.sh"
+source "${DIR}/nvm.sh"
 CURRENT_NODE_VERSION=`node --version`
 NEEDED_NODE_VERSION='v0.8.22'
 HAS_NEEDED_VERSION=`nvm ls | grep ${NEEDED_NODE_VERSION}`
@@ -18,6 +18,8 @@ nvm use $NEEDED_NODE_VERSION
 #get in the right directory, meaning the root of this project
 cd "$DIR/.."
 export ROOT=${PWD}
+export LOG_DIR=${ROOT}/var/log
+export ETC_DIR=${ROOT}/etc
 export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 #self update, make sure all our needed packages are in place
 npm install

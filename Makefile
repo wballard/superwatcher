@@ -4,21 +4,14 @@ CURL ?= curl --silent
 .PHONY: test
 
 test: 
-	$(MAKE)	works_at_all works_with_switches works_with_sockets
+	$(MAKE)	works_with_sockets
 
-works_at_all:
-	$(CURL) "http://localhost:8080/test/handlers/echo" > test/$@.tmp
-	$(DIFF) test/$@.tmp test/$@.expected
-
-works_with_switches:
-	$(CURL) "http://localhost:8080/test/handlers/echo?pantalones=conqueso&smurfs=hat&pantalones=diablo" > test/$@.tmp
-	$(DIFF) test/$@.tmp test/$@.expected
 
 works_with_sockets:
-	echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'})" \
+	echo "test('localhost', 8080, '/test/handlers/echo', {'a': 'b'}, ['arg1', 'arg2'])" \
 	| ./bin/poke \
-	> test/$@.tmp
-	$(DIFF) test/$@.tmp test/$@.expected
+	| tee /tmp/$@
+	$(DIFF) /tmp/$@ test/expected/$@
 
 start:
 	./bin/start

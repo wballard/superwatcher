@@ -3,14 +3,13 @@ echo "{'message': 'I am alive!'}"
 echo "stderr: i am alive!" >&2
 echo "there should be no line above that starts with stderr:"
 echo "PATH_INFO:       ${PATH_INFO}"
-echo "METHOD:          ${METHOD}"
 echo "SCRIPT_NAME:     ${SCRIPT_NAME}"
-echo "SERVER_PORT:     ${SERVER_PORT}"
-echo "SERVER_NAME:     ${SERVER_NAME}"
 if [ "${READ_STDIN}" == "TRUE" ]; then
     echo "<stdin> **********************************"
     cat /dev/fd/0 
     echo ""
     echo "</stdin> **********************************"
 fi
-echo $@
+echo "<args> **********************************"
+echo $*
+echo "</args> **********************************"

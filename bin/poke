@@ -24,20 +24,15 @@ do () ->
         output: process.stdout
     .on 'exit', ->
         console.log 'cya'
-    #hook on up
-    poker.context.connect = (host, port) ->
-        socket = io_client.connect("http://#{host}:#{port}")
-        socket.on 'connect', ->
-            util.log "connected #{host}:#{port}"
-    #send a message if already connected
-    poker.context.send = (name, content) ->
-        socket.emit name, content, (reply) ->
-            util.log "reply: #{reply}"
     #use this for self test
-    poker.context.test = (host, port, name, content) ->
+    poker.context.test = (host, port, name, content, args) ->
+        message =
+            command: name
+            stdin: content
+            args: args
         socket = io_client.connect("http://#{host}:#{port}")
         socket.on 'connect', ->
-            socket.emit name, content, (reply) ->
+            socket.emit 'exec', message, (reply) ->
                 console.log "reply to poke #{reply}"
                 process.exit()
         ''

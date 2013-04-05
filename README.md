@@ -66,7 +66,7 @@ and output.
 ## Events ##
 In addition to running commands for you, superforker will give you file
 change events. This fits with how we like to program, shell-inspired,
-[[where]] each user has a home directory in which we can write them messages
+where each user has a home directory in which we can write them messages
 and data in simple files.
 
 To use this, just connect socket.io to

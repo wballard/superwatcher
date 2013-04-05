@@ -1,4 +1,5 @@
 #! /usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR/environment"
 #make sure our exciting environment repository is up to date, and if it changed
 #then we are going to need to restart

@@ -80,5 +80,5 @@ module.exports = (port, root) ->
                 childProcess.stdin.end JSON.stringify(message.stdin)
     #have socket.io not yell so much
     io.set 'log level', 0
-    util.log "serving handlers from #{root}"
+    util.log "serving handlers from #{root} with node #{process.version}"
     server.listen port

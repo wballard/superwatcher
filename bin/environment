@@ -1,7 +1,7 @@
 # vim: ft=sh
 #Set up what we expect to have a good superforker environment. This is used from
 #start and stop before the first fork
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR=$(python -c "import os; print os.path.dirname(os.path.realpath(\"${0}\"))")
 
 #use the node we insist on
 export NVM_DIR=""
@@ -17,25 +17,20 @@ fi
 
 nvm use $NEEDED_NODE_VERSION
 which node
-npm install .
 HAS_FOREVER=`which forever`
 if [ -z "${HAS_FOREVER}" ]; then
   npm install -g forever
 fi
-#BIN is...
-cd "$DIR"
-export BIN=${PWD}
-#get in the right directory, meaning the root of this project
-cd "$DIR/.."
-export ROOT=${PWD}
+export BIN=${DIR}
+export APP=${DIR}/..
+export ROOT=${HOME}/.superforker
+mkdir ${ROOT}
 export LOG_DIR=${ROOT}/var/log
 export ETC_DIR=${ROOT}/etc
 export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 export PORT=8080
 export HANDLE_THIS=${ROOT}
-if [ -e ${ETC_DIR}/handlers ]; then
-  HANDLE_THIS=${ETC_DIR}/handlers
-fi
+export HANDLE_THIS=${ETC_DIR}/handlers
 
 #source any included environment if present
 if [ -e ${ROOT}/etc/environment/environment ]; then

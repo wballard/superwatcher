@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR=$(python -c "import os; print os.path.dirname(os.path.realpath(\"${0}\"))")
 source "$DIR/environment"
 #lets ask forever if stuff is running from this directory
 RUNNING=`forever list | grep "${ROOT}"`
@@ -14,14 +14,14 @@ if [[ -z "${RUNNING}" ]]; then
   if [ -e ${ETC_DIR}/environment/before_start ]; then
     ${ETC_DIR}/environment/before_start
   fi
-  forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${ROOT}/src ${BIN}/serve ${PORT} ${HANDLE_THIS}
+  forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${APP} ${BIN}/serve ${PORT} ${HANDLE_THIS}
 fi
 
 #and put in a watchdog cron task to keep everything working
 if [[ -z "${WATCHDOG}" ]]; then
   echo "Adding a watchdog"
   crontab -l > crontemp
-  printf "* * * * *\tcd "${ROOT}"; ./bin/watchdog > ${LOG_DIR}/watchdog.log 2>&1\n" >> crontemp
+  printf "* * * * *\tcd "${ROOT}"; ${BIN}/watchdog > ${LOG_DIR}/watchdog.log 2>&1\n" >> crontemp
   cat crontemp | crontab
   rm crontemp
 fi

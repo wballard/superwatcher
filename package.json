@@ -2,7 +2,6 @@
   "name": "superforker",
   "version": "0.0.1",
   "description": "Make web APIs using shell script techniques",
-  "main": "./bin/superforker.coffee",
   "dependencies": {
     "chokidar": "",
     "socket.io": "",
@@ -11,8 +10,7 @@
     "express": "",
     "docopt": "",
     "forever": "",
-    "underscore": "",
-    "shellscript": "git://github.com/wballard/shellscript.git"
+    "underscore": ""
   },
   "engine": {
     "node": "0.8.11"
@@ -23,6 +21,9 @@
     "test": "make test"
   },
   "bin": {
-    "superforker": "./bin/superforker"
+    "superforker-start": "./bin/start",
+    "superforker-stop": "./bin/stop",
+    "superforker-environment": "./bin/clone_environment",
+    "superforker-handlers": "./bin/clone_handlers"
   }
 }

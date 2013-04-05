@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR=$(python -c "import os; print os.path.dirname(os.path.realpath(\"${0}\"))")
 source "$DIR/environment"
 #have forever stop the madness, and remove the watchdog cron job
-forever stop ${ROOT}/bin/serve
+forever stop ${BIN}/serve
 WATCHDOG=`crontab -l | grep "${ROOT}"`
 if [[ -n "$WATCHDOG" ]]; then
   echo "Removing the watchdog"

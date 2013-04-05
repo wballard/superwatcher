@@ -6,7 +6,6 @@ CURL ?= curl --silent
 test: 
 	$(MAKE)	works_with_sockets
 
-
 works_with_sockets:
 	echo "test('localhost', 8080, '/echo', {'a': 'b'}, ['arg1', 'arg2'])" \
 	| ./bin/poke \

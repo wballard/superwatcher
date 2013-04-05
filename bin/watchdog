@@ -3,21 +3,21 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$DIR/environment"
 #make sure our exciting environment repository is up to date, and if it changed
 #then we are going to need to restart
-./bin/update_repo_as_needed ./etc/environment
+${BIN}/update_repo_as_needed ./etc/environment
 if [ $? == 100 ]; then
   echo "environment changed, stopping the server to pick up the changes"
-  $DIR/stop
+  ${BIN}/stop
 fi
 
-./bin/update_repo_as_needed ./etc/handlers
+${BIN}/update_repo_as_needed ./etc/handlers
 if [ $? == 100 ]; then
     echo "handlers changed, no need to stop and restart"
-    if [ -e ./etc/handlers/on_update ]; then
-        pushd ./etc/handlers
+    if [ -e ${ETC_DIR}/handlers/on_update ]; then
+        pushd ${ETC_DIR}/handlers
         ./on_update
         popd
     fi
 fi
 
 #call into the start, it's safe to call if we are already started, we promise
-$DIR/start
+${BIN}/start

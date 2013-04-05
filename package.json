@@ -11,7 +11,8 @@
     "express": "",
     "docopt": "",
     "forever": "",
-    "underscore": ""
+    "underscore": "",
+    "shellscript": "git://github.com/wballard/shellscript.git"
   },
   "engine": {
     "node": "0.8.11"

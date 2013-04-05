@@ -11,14 +11,14 @@ mkdir -p ${ETC_DIR}
 
 #only start if we aren't already running
 if [[ -z "${RUNNING}" ]]; then
-  if [ -e ${ROOT}/etc/environment/before_start ]; then
-    ${ROOT}/etc/environment/before_start
+  if [ -e ${ETC_DIR}/environment/before_start ]; then
+    ${ETC_DIR}/environment/before_start
   fi
   HANDLE_THIS=${ROOT}
-  if [ -e ${ROOT}/etc/handlers ]; then
-    HANDLE_THIS=${ROOT}/etc/handlers
+  if [ -e ${ETC_DIR}/handlers ]; then
+    HANDLE_THIS=${ETC_DIR}/handlers
   fi
-  ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${BIN} -c ${ROOT}/node_modules/coffee-script/bin/coffee ${BIN}/server --root ${HANDLE_THIS}
+  ${ROOT}/node_modules/forever/bin/forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${ROOT}/src ${BIN}/server --root ${HANDLE_THIS}
 fi
 
 #and put in a watchdog cron task to keep everything working

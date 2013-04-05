@@ -12,12 +12,13 @@ works_with_sockets:
 	| tee /tmp/$@
 	$(DIFF) /tmp/$@ test/expected/$@
 
+environment:
+	./bin/superforker environment "git://github.com/wballard/superforker.environment.git"
+	./bin/superforker handlers "git://github.com/wballard/superforker.handlers.git"
+
 start:
-	./bin/start
+	./bin/superforker start
 
 stop:
-	./bin/stop
-
-watchdog:
-	./bin/watchdog
+	./bin/superforker stop
 

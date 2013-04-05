@@ -4,6 +4,8 @@ Superforker!
 Usage:
     superforker serve [PORT] [--root=<root>]
     superforker start
+    superforker environment <giturl>
+    superforker handlers <giturl>
     superforker stop
 
 Options:
@@ -27,4 +29,10 @@ options.serve and server(
     options['--root'] or DEFAULT_ROOT)
 
 options.start and shell("#{__dirname}/../bin/start")
+
 options.stop and shell("#{__dirname}/../bin/stop")
+
+options.environment and shell("#{__dirname}/../bin/clone_environment #{options['<giturl>']}")
+
+options.handlers and shell("#{__dirname}/../bin/clone_handlers #{options['<giturl>']}")
+

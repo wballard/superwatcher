@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$DIR/environment"
+rm -rf ${ETC_DIR}/environment
+git clone $1 ${ETC_DIR}/environment
+

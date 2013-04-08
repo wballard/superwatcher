@@ -2,7 +2,7 @@
 #make sure we have node going, this needs to be here to make
 #the cron tab auto restart work
 export ROOT=${ROOT:-"${HOME}/.superforker"}
-if [ ! -d "${ROOT}" ]; then
+if [ -z "${ROOT}" ]; then
     mkdir -p "${ROOT}"
 fi
 

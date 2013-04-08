@@ -1,27 +1,20 @@
 #!/usr/bin/env bash
 source "$SUPERFORKER_ROOT/src/env"
-exit 0
 #lets ask forever if stuff is running from this directory
 RUNNING=`forever list | grep "${ROOT}"`
 WATCHDOG=`crontab -l | grep "${ROOT}"`
-
-# a place for our logs, and everything in its place
-mkdir -p ${LOG_DIR}
-mkdir -p ${ETC_DIR}
-
 #only start if we aren't already running
-if [[ -z "${RUNNING}" ]]; then
+if [ -z "${RUNNING}" ]; then
   if [ -e ${ETC_DIR}/environment/before_start ]; then
     ${ETC_DIR}/environment/before_start
   fi
-  forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory ${APP} ${BIN}/serve ${PORT} ${HANDLE_THIS}
+  forever start --append -l "${LOG_DIR}/forever.log" -o "${LOG_DIR}/out.log" -e "${LOG_DIR}/err.log" --watch --watchDirectory "${SUPERFORKER_ROOT}" "${BIN}/serve" ${PORT} ${HANDLE_THIS}
 fi
-
 #and put in a watchdog cron task to keep everything working
-if [[ -z "${WATCHDOG}" ]]; then
+if [ -z "${WATCHDOG}" ]; then
   echo "Adding a watchdog"
   crontab -l > crontemp
-  printf "* * * * *\tcd "${ROOT}"; ${BIN}/watchdog > ${LOG_DIR}/watchdog.log 2>&1\n" >> crontemp
+  printf "* * * * *\tsource "${SUPERFORKER_ROOT}/src/bootstrap"; "${BIN}/watchdog" > "${LOG_DIR}/watchdog.log" 2>&1\n" >> crontemp
   cat crontemp | crontab
   rm crontemp
 fi

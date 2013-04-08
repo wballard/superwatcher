@@ -5,13 +5,21 @@
 #first, make sure we have boostrapped node
 source "${SUPERFORKER_ROOT}/src/bootstrap"
 
+export BIN="${SUPERFORKER_ROOT}/bin"
+
 #now all our environment variables
-export ROOT=${HOME}/.superforker
+export ROOT="${HOME}/.superforker"
 if [ ! -d "${ROOT}" ]; then
-    mkdir "${ROOT}"
+    mkdir -p "${ROOT}"
 fi
-export LOG_DIR=${ROOT}/var/log
-export ETC_DIR=${ROOT}/etc
+export ETC_DIR="${ROOT}/etc"
+if [ ! -d "${ETC_DIR}" ]; then
+    mkdir -p "${ETC_DIR}"
+fi
+export LOG_DIR="${ROOT}/var/log"
+if [ ! -d "${LOG_DIR}" ]; then
+    mkdir -p "${LOG_DIR}"
+fi
 export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 export PORT=8080
 export HANDLE_THIS=${ETC_DIR}/handlers
@@ -20,7 +28,6 @@ if [ ! -d "${ROOT}/${NEEDED_NODE_VERSION}/lib/node_modules/superforker" ]; then
   npm install -g "${SUPERFORKER_ROOT}"
   npm install -g forever
 fi
-
 
 #source any included environment if present
 if [ -e "${ETC_DIR}/environment/environment" ]; then

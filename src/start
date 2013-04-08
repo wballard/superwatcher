@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-DIR=$(python -c "import os; print os.path.dirname(os.path.realpath(\"${0}\"))")
-source "$DIR/environment"
+source "$SUPERFORKER_ROOT/src/env"
+exit 0
 #lets ask forever if stuff is running from this directory
 RUNNING=`forever list | grep "${ROOT}"`
 WATCHDOG=`crontab -l | grep "${ROOT}"`

@@ -1,0 +1,42 @@
+# vim: ft=sh
+#Set up what we expect to have a good superforker environment. This is used from
+#start and stop before the first fork
+
+#first, make sure we have boostrapped node
+source "${SUPERFORKER_ROOT}/src/bootstrap"
+
+#now all our environment variables
+export ROOT=${HOME}/.superforker
+if [ ! -d "${ROOT}" ]; then
+    mkdir "${ROOT}"
+fi
+export LOG_DIR=${ROOT}/var/log
+export ETC_DIR=${ROOT}/etc
+export FORKER_SHA=`git log -1 --oneline | awk '{ print $1 }'`
+export PORT=8080
+export HANDLE_THIS=${ETC_DIR}/handlers
+
+if [ ! -d "${ROOT}/${NEEDED_NODE_VERSION}/lib/node_modules/superforker" ]; then
+  npm install -g "${SUPERFORKER_ROOT}"
+  npm install -g forever
+fi
+
+
+#source any included environment if present
+if [ -e "${ETC_DIR}/environment/environment" ]; then
+    source "${ETC_DIR}/environment/environment"
+	pushd ${ROOT}/etc/environment
+	export ENVIRONMENT_SHA=`git log -1 --oneline | awk '{ print $1 }'`
+	popd
+fi
+#and any handlers if present
+if [ -e "${ETC_DIR}/handlers" ]; then
+	pushd "${ETC_DIR}/handlers"
+	export HANDLERS_SHA=`git log -1 --oneline | awk '{ print $1 }'`
+	popd
+fi
+
+echo Here is what will run
+which node
+which superforker
+which forever

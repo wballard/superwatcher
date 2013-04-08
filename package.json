@@ -1,7 +1,7 @@
 {
   "name": "superforker",
   "version": "0.0.1",
-  "description": "Make web APIs using shell script techniques",
+  "description": "Make web APIs using shell script techniques, then stream them on socket.io.",
   "dependencies": {
     "chokidar": "",
     "socket.io": "",
@@ -21,9 +21,6 @@
     "test": "make test"
   },
   "bin": {
-    "superforker-start": "./bin/start",
-    "superforker-stop": "./bin/stop",
-    "superforker-environment": "./bin/clone_environment",
-    "superforker-handlers": "./bin/clone_handlers"
+    "superforker": "./bin/superforker"
   }
 }

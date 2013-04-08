@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-DIR=$(python -c "import os; print os.path.dirname(os.path.realpath(\"${0}\"))")
-source "$DIR/environment"
-rm -rf ${ETC_DIR}/environment
-git clone $1 ${ETC_DIR}/environment

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-source "$SUPERFORKER_ROOT/src/env"
+source "${SUPERFORKER_ROOT}/src/env"
 #have forever stop the madness, and remove the watchdog cron job
-forever stop "${BIN}/serve"
+superforker undaemon
 WATCHDOG=`crontab -l | grep "${ROOT}"`
 #wipe out the watchdog from the crontab
 if [ -n "$WATCHDOG" ]; then

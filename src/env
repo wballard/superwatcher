@@ -8,10 +8,6 @@ source "${SUPERFORKER_ROOT}/src/bootstrap"
 export BIN="${SUPERFORKER_ROOT}/bin"
 
 #now all our environment variables
-export ROOT="${HOME}/.superforker"
-if [ ! -d "${ROOT}" ]; then
-    mkdir -p "${ROOT}"
-fi
 export ETC_DIR="${ROOT}/etc"
 if [ ! -d "${ETC_DIR}" ]; then
     mkdir -p "${ETC_DIR}"

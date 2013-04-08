@@ -13,12 +13,13 @@ works_with_sockets:
 	$(DIFF) /tmp/$@ test/expected/$@
 
 environment:
-	./bin/clone_environment "git://github.com/wballard/superforker.environment.git"
-	./bin/clone_handlers "git://github.com/wballard/superforker.handlers.git"
+	./bin/superforker init environment "git://github.com/wballard/superforker.environment.git"
+	./bin/superforker init handlers "git://github.com/wballard/superforker.handlers.git"
 
 start:
-	./bin/start
+	./bin/superforker init
+	./bin/superforker start
 
 stop:
-	./bin/stop
+	./bin/superforker stop
 

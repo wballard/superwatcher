@@ -1,8 +1,10 @@
 # vim: ft=sh
 #make sure we have node going, this needs to be here to make
 #the cron tab auto restart work
-export ROOT=${HOME}/.superforker
-mkdir ${ROOT}
+export ROOT=${ROOT:-"${HOME}/.superforker"}
+if [ ! -d "${ROOT}" ]; then
+    mkdir -p "${ROOT}"
+fi
 
 #use the node we insist on
 export NVM_DIR=""

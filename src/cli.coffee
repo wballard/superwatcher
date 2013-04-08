@@ -10,7 +10,8 @@ doc = """
 
 Usage:
     superforker [options] start
-    superforker [options] (stop|handlers|environment|info)
+    superforker [options] stop
+    superforker [options] (handlers|environment|info)
 
 Options:
     --help
@@ -32,5 +33,5 @@ exec = (program, args) ->
     running.on 'code', (code) ->
         process.exit code
 
-if options.start
-    exec path.join(__dirname, 'start')
+options.start and exec path.join(__dirname, 'start')
+options.stop and exec path.join(__dirname, 'stop')

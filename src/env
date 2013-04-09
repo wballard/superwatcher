@@ -26,17 +26,19 @@ if [ ! -d "${ROOT}/${NEEDED_NODE_VERSION}/lib/node_modules/superforker" ]; then
 fi
 
 #source any included environment if present
-if [ -e "${ETC_DIR}/environment/environment" ]; then
+if [ -d "${ETC_DIR}/environment" ]; then
+  if [ -e "${ETC_DIR}/environment/environment" ]; then
     source "${ETC_DIR}/environment/environment"
-	pushd ${ROOT}/etc/environment
+  fi
+	pushd "${ETC_DIR}/environment" > /dev/null
 	export ENVIRONMENT_SHA=`git log -1 --oneline | awk '{ print $1 }'`
-	popd
+	popd > /dev/null
 fi
 #and any handlers if present
-if [ -e "${ETC_DIR}/handlers" ]; then
-	pushd "${ETC_DIR}/handlers"
+if [ -d "${ETC_DIR}/handlers" ]; then
+	pushd "${ETC_DIR}/handlers" > /dev/null
 	export HANDLERS_SHA=`git log -1 --oneline | awk '{ print $1 }'`
-	popd
+	popd > /dev/null
 fi
 
 echo Here is what will run

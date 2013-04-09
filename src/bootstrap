@@ -2,7 +2,8 @@
 #make sure we have node going, this needs to be here to make
 #the cron tab auto restart work
 export ROOT=${ROOT:-"${HOME}/.superforker"}
-if [ -z "${ROOT}" ]; then
+echo ${ROOT}
+if [ ! -d "${ROOT}" ]; then
     mkdir -p "${ROOT}"
 fi
 
@@ -19,4 +20,3 @@ if [ -z "${HAS_NEEDED_VERSION}" ]; then
   npm update
 fi
 nvm use $NEEDED_NODE_VERSION
-node --version

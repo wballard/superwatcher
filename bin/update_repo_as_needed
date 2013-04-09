@@ -9,7 +9,7 @@ function log(){
 # it's a git repo with remote changes available, updated
 #
 # usage:
-#   update_repo_as_needed [expand] [directory]
+#   update_repo_as_needed [directory]
 #
 ################################################################################
 ACTION=$1
@@ -19,10 +19,6 @@ case $ACTION in
         ;;
     '--help')
         ACTION=help
-        ;;
-    expand)
-        ;;
-    test_only)
         ;;
     *)
         # don't know what it is, must be trying to give us a dir
@@ -34,14 +30,9 @@ case $ACTION in
 esac
 
 if [ $ACTION == "help" ]; then
-    echo "`basename $0` [expand | test_only] [directory]"
-    echo "    expand - causes the output of the full path to the script and the"
-    echo "       repo directories to be sent to stdout, used to facilitate"
-    echo "       creating crontab entries"
+    echo "`basename $0` [directory]"
     echo "    directory - optional repository directory to check, if not "
     echo "       provided the current directory is checked"
-    echo "    test_only - indicates that the check to see if an update is available"
-    echo "       should be performed, but no update should be done"
     echo ""
     echo "Actions:"
     echo "    If the repo dir contains a file named update_repo_action which is"
@@ -52,31 +43,24 @@ if [ $ACTION == "help" ]; then
     exit 1
 fi
 
-shift
-if [ "${REPO_DIR}x" == "x" ]; then
-    REPO_DIR=$1
-    shift
-fi
 if [ "${REPO_DIR}x" == "x" ]; then
     # no dir provided, assume current directory
     REPO_DIR=`pwd`
+else
+    #if you specify a directory, it had better exist
+    if [ ! -d "#{REPO_DIR}" ]; then
+      exit 1
+    fi
 fi
-
 
 cd ${REPO_DIR}
 # want to get the full directory for our repo
 REPO_DIR=`pwd`
 
-
 git rev-parse --git-dir >> /dev/null 2>&1
 if [ $? -ne 0 ]; then
     log "${REPO_DIR} doesn't appear to be a git repo, nothing to do"
     exit 2
-fi
-
-if [ $ACTION == "expand" ]; then
-    printf "* * * * *\t$0 $REPO_DIR >> ~/repo_update.log 2>&1"
-    exit 3
 fi
 
 FETCH_RESULTS=`git fetch --all `
@@ -95,15 +79,11 @@ if [ "${HAS_CHANGES}x" == "x" ]; then
     log "no changes, nothing to update"
     exit 5
 else
-    if [ ! "$ACTION" == "test_only" ]; then
-      log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
-      git reset --hard origin/${CURRENT_BRANCH}
-      # if we have a post update script, run it
-      if [ -x ${REPO_DIR}/update_repo_action ]; then
-        ${REPO_DIR}/update_repo_action
-      fi
-    else
-      log "changes detected for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
+    log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
+    git reset --hard origin/${CURRENT_BRANCH}
+    # if we have a post update script, run it
+    if [ -x ${REPO_DIR}/update_repo_action ]; then
+      ${REPO_DIR}/update_repo_action
     fi
     exit 100
 fi

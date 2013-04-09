@@ -15,7 +15,7 @@ fi
 if [ -z "${WATCHDOG}" ]; then
   echo "Adding a watchdog"
   crontab -l > crontemp
-  printf "* * * * *\texport ROOT=\"${ROOT}\"; source \"${SUPERFORKER_ROOT}/src/bootstrap\"; superforker watchdog > \"${LOG_DIR}/watchdog.log\" 2>&1\n" >> crontemp
+  printf "* * * * *\texport ROOT=\"${ROOT}\"; export SUPERFORKER_ROOT=\"${SUPERFORKER_ROOT}\"; source \"${SUPERFORKER_ROOT}/src/bootstrap\" > /dev/null 2>&1; superforker watchdog > \"${LOG_DIR}/watchdog.log\" 2>&1\n" >> crontemp
   cat crontemp | crontab
   rm crontemp
 fi

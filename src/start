@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 # vim: ft=sh
 source "${SUPERFORKER_ROOT}/src/env"
-#lets ask forever if stuff is running from this directory
-RUNNING=`forever list | grep "${ROOT}"`
-WATCHDOG=`crontab -l | grep "${ROOT}"`
-#only start if we aren't already running
+RUNNING=`forever list | grep  "${SUPERFORKER_INSTALLED}"`
 if [ -z "${RUNNING}" ]; then
-  if [ -e ${ETC_DIR}/environment/before_start ]; then
-    "${ETC_DIR}/environment/before_start"
-  fi
-  superforker daemon ${PORT} "${LOG_DIR}" "${HANDLE_THIS}"
+  forever start --append -l ${LOG_DIR}/forever.log -o ${LOG_DIR}/out.log -e ${LOG_DIR}/err.log --watch --watchDirectory "${SUPERFORKER_INSTALLED}" "${SUPERFORKER_INSTALLED}/src/server_shim.js" ${PORT} ${HANDLE_THIS}
 fi
 #and put in a watchdog cron task to keep everything working
+WATCHDOG=`crontab -l | grep "${ROOT}"`
 if [ -z "${WATCHDOG}" ]; then
   echo "Adding a watchdog"
   crontab -l > crontemp

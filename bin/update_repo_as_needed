@@ -48,7 +48,7 @@ if [ "${REPO_DIR}x" == "x" ]; then
     REPO_DIR=`pwd`
 else
     #if you specify a directory, it had better exist
-    if [ ! -d "#{REPO_DIR}" ]; then
+    if [ ! -d "${REPO_DIR}" ]; then
       exit 1
     fi
 fi

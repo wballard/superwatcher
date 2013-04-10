@@ -33,4 +33,5 @@ do () ->
             socket.emit 'exec', message, (reply) ->
                 console.log "reply to poke #{reply}"
                 process.exit()
+        setTimeout (-> process.exit(1)), 2000
         ''

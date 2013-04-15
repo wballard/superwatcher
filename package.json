@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "Make web APIs using shell script techniques, then stream them on socket.io.",
   "dependencies": {
-    "chokidar": "",
     "socket.io": "",
     "socket.io-client": "",
     "coffee-script": "",

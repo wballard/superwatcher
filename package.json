@@ -10,7 +10,8 @@
     "express": "",
     "docopt": "",
     "forever": "",
-    "underscore": ""
+    "underscore": "",
+    "js-yaml": ""
   },
   "engine": {
     "node": "0.8.11"

@@ -28,7 +28,7 @@ do () ->
             command: name
             stdin: content
             args: args
-        socket = io_client.connect("http://#{host}:#{port}")
+        socket = io_client.connect("http://#{host}:#{port}?authtoken=superpoker")
         socket.on 'connect', ->
             socket.emit 'exec', message, (reply) ->
                 console.log "reply to poke #{reply}"

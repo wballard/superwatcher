@@ -63,8 +63,9 @@ module.exports = (port, root) ->
     io.on 'connection', (socket) ->
         util.log "connected as #{socket.handshake.USER}"
         socket.on 'disconnect', ->
-            for directory, watcher of (socket.watchers or {})
-                watcher.close()
+            util.log "disconnected as #{socket.handshake.USER}"
+            if socket.watcher
+                socket.watcher.close()
         socket.on 'unlinkFile', (message) ->
             fs.unlink message.path, ->
                 socket.emit 'unlinkFileComplete',
@@ -74,8 +75,12 @@ module.exports = (port, root) ->
                 socket.emit 'writeFileComplete',
                     path: message.path
         socket.on 'watch', (message) ->
-            socket.watchers = socket.watchers or {}
-            socket.watchers[message.directory] = watcher = chokidar.watch message.directory
+            if not socket.watcher
+                socket.watcher = chokidar.watch __filename
+            if not socket.watcher[message.directory]
+                socket.watcher[message.directory] = true
+                socket.watcher.add message.directory
+            watcher = socket.watcher
             watcher.on 'add', (filename) ->
                 socket.emit 'addFile', (filename)
             watcher.on 'change', (filename) ->

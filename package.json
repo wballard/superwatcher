@@ -10,7 +10,9 @@
     "docopt": "",
     "forever": "",
     "underscore": "",
-    "js-yaml": ""
+    "js-yaml": "",
+    "chokidar": "",
+    "sleep": ""
   },
   "engine": {
     "node": "0.8.11"

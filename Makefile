@@ -4,13 +4,19 @@ CURL ?= curl --silent
 .PHONY: test
 
 test: 
-	$(MAKE)	works_with_sockets
+	$(MAKE)	works_with_sockets works_with_watch
 
 test_pass:
 	DIFF=cp $(MAKE) test
 
 works_with_sockets:
 	echo "test('localhost', 8080, '/echo', {'a': 'b'}, ['arg1', 'arg2'])" \
+	| ./bin/poke \
+	| tee /tmp/$@
+	$(DIFF) /tmp/$@ test/expected/$@
+
+works_with_watch:
+	echo "test_watch('localhost', 8080, 'test/watch')" \
 	| ./bin/poke \
 	| tee /tmp/$@
 	$(DIFF) /tmp/$@ test/expected/$@
@@ -27,4 +33,4 @@ stop:
 	./bin/superforker stop
 
 test_start:
-	forever src/server_shim.js 8080 test/handlers
+	forever --watch --watchDirectory src src/server_shim.js 8080 test/handlers

@@ -1,0 +1,5 @@
+:)''
+:)cya
+add test/watch/a.txt
+change test/watch/a.txt
+unlink test/watch/a.txt

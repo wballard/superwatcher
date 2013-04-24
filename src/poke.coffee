@@ -9,6 +9,8 @@ Usage:
 repl = require 'repl'
 io_client = require 'socket.io-client'
 util = require 'util'
+path = require 'path'
+sleep = require 'sleep'
 
 options = docopt(doc)
 
@@ -35,3 +37,30 @@ do () ->
                 process.exit()
         setTimeout (-> process.exit(1)), 2000
         ''
+    #use this for self test file watching
+    poker.context.test_watch = (host, port, directory) ->
+        message =
+            directory: directory
+        socket = io_client.connect("http://#{host}:#{port}?authtoken=superpoker")
+        socket.on 'connect', ->
+            socket.emit 'watch', message
+            socket.emit 'writeFile',
+                path: path.join directory, 'a.txt'
+                content: 'Hello'
+        socket.on 'addFile', (message) ->
+            console.log 'add', message
+            sleep.sleep 1
+            socket.emit 'writeFile',
+                path: path.join directory, 'a.txt'
+                content: 'World'
+        socket.on 'changeFile', (message) ->
+            console.log 'change', message
+            sleep.sleep 1
+            socket.emit 'unlinkFile',
+                path: path.join directory, 'a.txt'
+        socket.on 'unlinkFile', (message) ->
+            console.log 'unlink', message
+            process.exit()
+        setTimeout (-> process.exit(1)), 5000
+        ''
+

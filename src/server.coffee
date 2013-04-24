@@ -9,6 +9,7 @@ url = require 'url'
 util = require 'util'
 _ = require 'underscore'
 yaml = require 'js-yaml'
+chokidar = require 'chokidar'
 
 #It's a bird, it's a plane, it's GUID-like!
 guid_like = () ->
@@ -61,6 +62,26 @@ module.exports = (port, root) ->
     #message processing at its finest
     io.on 'connection', (socket) ->
         util.log "connected as #{socket.handshake.USER}"
+        socket.on 'disconnect', ->
+            for directory, watcher of (socket.watchers or {})
+                watcher.close()
+        socket.on 'unlinkFile', (message) ->
+            fs.unlink message.path, ->
+                socket.emit 'unlinkFileComplete',
+                    path: message.path
+        socket.on 'writeFile', (message) ->
+            fs.writeFile message.path, message.content, ->
+                socket.emit 'writeFileComplete',
+                    path: message.path
+        socket.on 'watch', (message) ->
+            socket.watchers = socket.watchers or {}
+            socket.watchers[message.directory] = watcher = chokidar.watch message.directory
+            watcher.on 'add', (filename) ->
+                socket.emit 'addFile', (filename)
+            watcher.on 'change', (filename) ->
+                socket.emit 'changeFile', (filename)
+            watcher.on 'unlink', (filename) ->
+                socket.emit 'unlinkFile', (filename)
         socket.on 'exec', (message, ack) ->
             message.path = path.join root, message.command
             util.log message.path, root

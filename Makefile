@@ -26,3 +26,5 @@ start:
 stop:
 	./bin/superforker stop
 
+test_start:
+	forever src/server_shim.js 8080 test/handlers

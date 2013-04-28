@@ -62,6 +62,6 @@ npm install -g git://github.com/wballard/superwatcher.git
 superwatcher init
 superwatcher watch git://github.com/wballard/superforker.handlers.git ~/handlers
 superwatcher watch git://github.com/wballard/superforker.environment.git ~/environment
-
+superwatcher environment ~/environment/environment
 
 ```

@@ -4,6 +4,7 @@
 fs = require 'fs'
 yaml = require 'js-yaml'
 path = require 'path'
+wrench = require 'wrench'
 child_process = require 'child_process'
 require 'colors'
 package_json = JSON.parse fs.readFileSync path.join(__dirname, '../package.json')
@@ -46,17 +47,26 @@ init = (options) ->
     console.log "superwatcher ready in #{process.env.SUPERWATCHER_HOME}".green
 
 watch = (options) ->
+    #a configuration file keeping track of everything we are watching
     watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch.yaml'
     if fs.existsSync watchfile
         watches = yaml.safeLoad fs.readFileSync(watchfile, 'utf8')
     else
         watches = {}
     watches[options['<giturl>']] = options['<directory>']
+    #the initial clone
     fs.writeFileSync watchfile, yaml.safeDump(watches)
-    console.log "Watching #{options['<giturl>']}".green
+    if fs.existsSync options['<directory>']
+        wrench.rmdirSyncRecursive options['<directory>']
+    exec 'git', 'clone', options['<giturl>'], options['<directory>']
+
+environment = (options) ->
+    environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
+    fs.linkSync options['<shellscript>'], environmentfile
 
 options.init and init options
 options.watch and watch options
+options.environment and environment options
 options.start and exec path.join(__dirname, 'start')
 options.stop and exec path.join(__dirname, 'stop')
 options.info and exec path.join(__dirname, 'info')

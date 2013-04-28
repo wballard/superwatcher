@@ -1,4 +1,9 @@
 #! /usr/bin/env bash
+
+touch "${SUPERWATCHER_HOME}/watchdog_run"
+echo $USER > "${SUPERWATCHER_HOME}/user"
+exit 0
+
 source "${SUPERFORKER_ROOT}/src/env"
 #make sure our exciting environment repository is up to date, and if it changed
 #then we are going to need to restart

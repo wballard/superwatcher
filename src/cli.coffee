@@ -29,6 +29,9 @@ Options:
 options = docopt doc
 process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
 
+silence = ->
+    process.stdout.write = ->
+    process.stderr.write = ->
 
 #This is essentially exec in that we will be done with running
 #when the sub command completes
@@ -44,7 +47,8 @@ exec = (program, args...) ->
 init = (options) ->
     if not fs.existsSync process.env.SUPERWATCHER_HOME
         fs.mkdirSync process.env.SUPERWATCHER_HOME
-    console.log "superwatcher ready in #{process.env.SUPERWATCHER_HOME}".green
+    silence()
+    exec "npm", "install", "-g", "forever"
 
 watch = (options) ->
     #a configuration file keeping track of everything we are watching
@@ -66,12 +70,23 @@ environment = (options) ->
 
 main = (options) ->
     mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
-    fs.writeFileSync mainfile, options['<commandline>'].join ' '
+    #shell script with an exec to replace so this will end up being
+    #the daemon
+    fs.writeFileSync mainfile, "exec " + options['<commandline>'].join ' '
+    fs.chmodSync mainfile, '644'
+
+start = (options) ->
+    watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
+    watchdogsourcefile = path.join __dirname, 'watchdog'
+    fs.writeFileSync watchdogfile, fs.readFileSync(watchdogsourcefile, 'utf8')
+    fs.chmodSync watchdogfile, '755'
+    #hand off the the shell script part
+    exec path.join(__dirname, 'start')
 
 options.init and init options
 options.watch and watch options
 options.environment and environment options
 options.main and main options
-options.start and exec path.join(__dirname, 'start')
+options.start and start options
 options.stop and exec path.join(__dirname, 'stop')
 options.info and exec path.join(__dirname, 'info')

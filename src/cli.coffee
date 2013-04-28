@@ -7,6 +7,8 @@ path = require 'path'
 wrench = require 'wrench'
 child_process = require 'child_process'
 require 'colors'
+_ = require 'underscore'
+
 package_json = JSON.parse fs.readFileSync path.join(__dirname, '../package.json')
 doc = """
 #{package_json.description}
@@ -28,6 +30,10 @@ Options:
 {docopt} = require 'docopt', version: package_json.version
 options = docopt doc
 process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
+watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch'
+environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
+mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
+updatefile = path.join process.env.SUPERWATCHER_HOME, "..", "bin", "update_repo_as_needed"
 
 silence = ->
     process.stdout.write = ->
@@ -47,29 +53,31 @@ exec = (program, args...) ->
 init = (options) ->
     if not fs.existsSync process.env.SUPERWATCHER_HOME
         fs.mkdirSync process.env.SUPERWATCHER_HOME
+    #hate listening to npm update the world
     silence()
+    #make sure we have a global forever, this is the key runner
     exec "npm", "install", "-g", "forever"
 
 watch = (options) ->
     #a configuration file keeping track of everything we are watching
-    watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch.yaml'
     if fs.existsSync watchfile
-        watches = yaml.safeLoad fs.readFileSync(watchfile, 'utf8')
+        watches = fs.readFileSync(watchfile, 'utf8').split '\n'
     else
-        watches = {}
-    watches[options['<giturl>']] = options['<directory>']
+        watches = []
+    watches = _.union watches, [options['<directory>']]
     #the initial clone
-    fs.writeFileSync watchfile, yaml.safeDump(watches)
+    fs.writeFileSync watchfile,
+        (_.filter watches, (x) -> x.length).join '\n'
     if fs.existsSync options['<directory>']
         wrench.rmdirSyncRecursive options['<directory>']
     exec 'git', 'clone', options['<giturl>'], options['<directory>']
 
 environment = (options) ->
-    environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
+    if fs.existsSync environmentfile
+        fs.unlinkSync environmentfile
     fs.linkSync options['<shellscript>'], environmentfile
 
 main = (options) ->
-    mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
     #shell script with an exec to replace so this will end up being
     #the daemon
     fs.writeFileSync mainfile, "exec " + options['<commandline>'].join ' '
@@ -78,8 +86,9 @@ main = (options) ->
 start = (options) ->
     watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
     watchdogsourcefile = path.join __dirname, 'watchdog'
-    fs.writeFileSync watchdogfile, fs.readFileSync(watchdogsourcefile, 'utf8')
-    fs.chmodSync watchdogfile, '755'
+    if fs.existsSync watchdogfile
+        fs.unlinkSync watchdogfile
+    fs.linkSync watchdogsourcefile, watchdogfile
     #hand off the the shell script part
     exec path.join(__dirname, 'start')
 

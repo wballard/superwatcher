@@ -10,6 +10,7 @@
     "js-yaml": "",
     "chokidar": "",
     "wrench": "",
+    "handlebars": "",
     "colors": ""
   },
   "engine": {

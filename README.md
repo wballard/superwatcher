@@ -52,3 +52,16 @@ Restarts are trigged by files changing as a result of an Auto Update.
 If any of these files change, the `Main` script is stopped then
 restarted to pick up the environment.
 
+# Enough Already! #
+
+Ok, here is how you use the thing, using `superforker`.
+
+```
+npm install -g git://github.com/wballard/superwatcher.git 
+
+superwatcher init
+superwatcher watch git://github.com/wballard/superforker.handlers.git ~/handlers
+superwatcher watch git://github.com/wballard/superforker.environment.git ~/environment
+
+
+```

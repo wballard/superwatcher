@@ -2,6 +2,7 @@
 #suite of command line actions.
 
 fs = require 'fs'
+yaml = require 'js-yaml'
 path = require 'path'
 child_process = require 'child_process'
 require 'colors'
@@ -44,8 +45,18 @@ init = (options) ->
         fs.mkdirSync process.env.SUPERWATCHER_HOME
     console.log "superwatcher ready in #{process.env.SUPERWATCHER_HOME}".green
 
+watch = (options) ->
+    watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch.yaml'
+    if fs.existsSync watchfile
+        watches = yaml.safeLoad fs.readFileSync(watchfile, 'utf8')
+    else
+        watches = {}
+    watches[options['<giturl>']] = options['<directory>']
+    fs.writeFileSync watchfile, yaml.safeDump(watches)
+    console.log "Watching #{options['<giturl>']}".green
+
 options.init and init options
+options.watch and watch options
 options.start and exec path.join(__dirname, 'start')
 options.stop and exec path.join(__dirname, 'stop')
-options.watchdog and exec path.join(__dirname, 'watchdog')
 options.info and exec path.join(__dirname, 'info')

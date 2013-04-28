@@ -1,38 +1,54 @@
 # Overview #
 
-Stick a FORK in HTTP!
+Auto-update by watching git repositories. Keep your main process
+running with a watchdog.
 
-Superforker is trying to go back in time, to a happy place where we
-didn't have to worry about framework and threads. Our conjecture is that
-you can make a perfectly good, modern JSON API using a mixture of three
-techniques:
+## Assumptions ##
 
-* CGI style fork per request
-* Socket.IO connectivity
-* File system events
+* Nothing is run as root, so you will need to serve high number ports
+from any scripts
+* Your program consists of one or more Git repositories, and a single
+entry point that can be invoked from the command line
+* Your program follows the [12 factor app](http://www.12factor.net)
+approach, specifically in that it is
+  * Just a program, not a daemon itself
+  * Reads from `ENV`
+  * Logs to `STDOUT` and `STDERR`
+  * Does not expect input from `STDIN`
+* You will only have one `superwatcher` based program per shell account
 
-In this setup, you can use any language you like, as long as you can
-create a command line program with it. The novel aspect is connecting Socket.IO,
-making one durable request for a single page app, paired with fork per
-request. This avoids the overhead of connecting over HTTP each request,
-freeing up that latency time to be invested in going framework free.
+## Watchdog ##
 
-# How It Works #
-Superforker connects Socket.IO to simple command line programs
-with the following protocol:
+The watchdog is the core that makes superwatcher work.
 
-* You send a message called `exec`
-* It has properties `command`, `stdin`, and an array `args`
-program
-* STDOUT is captured and written back as a Socket.IO message
-* STDERR is captured and logged server side
+The watchdog is a simple `cron` job that makes sure everything is running
+as well as driving the auto update loop. This lets the system survive a
+reboot, and doesn't require you to fuss with `init` and friends or other startup
+daemons. And, it doesn't require you to do anything as `root`. This
+approach has the advantage of working across multiple Unix/Linux/OSX
+versions, `cron` is always there!
 
-So, you just write a program, read STDIN, do stuff, write STDOUT. This
-bridges building HTTP APIs with simple shell programming. You an send
-any text you like. If you send JSON, the server will respond with a
-message this is structured JSON, otherwise it'll be a string.
+## Auto Update ##
 
-# The Server #
-The server is a node.js program, with socket.io, providing both the
-server and client library.
+The assumption is that your code is in Git, and that doing a release is
+driven by git push to a designated branch. Superwatcher will watch Git
+urls and pull in any changes.
+
+## Main ##
+
+A single command line is provided as the main. This is run forever with
+[forever](https://github.com/nodejitsu/forever), and monitored by the
+watchdog.
+
+## Environment ##
+
+A script can be designated as the environment, which will be sourced
+before running your main program. Ideally, this script is in a git
+repository as well, so it is autoupdated.
+
+## Restart Triggers ##
+
+Restarts are trigged by files changing as a result of an Auto Update.
+If any of these files change, the `Main` script is stopped then
+restarted to pick up the environment.
 

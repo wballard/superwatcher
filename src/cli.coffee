@@ -4,18 +4,19 @@
 fs = require 'fs'
 path = require 'path'
 child_process = require 'child_process'
+require 'colors'
 package_json = JSON.parse fs.readFileSync path.join(__dirname, '../package.json')
 doc = """
 #{package_json.description}
 
 Usage:
-    superforker [options] start
-    superforker [options] stop
-    superforker [options] watchdog
-    superforker [options] info
-    superforker [options] init
-    superforker [options] init handlers <giturl>
-    superforker [options] init environment <giturl>
+    superwatcher [options] init
+    superwatcher [options] info
+    superwatcher [options] start
+    superwatcher [options] stop
+    superwatcher [options] watch <giturl> <directory>
+    superwatcher [options] main <commandline>...
+    superwatcher [options] environment <shellscript>
 
 Options:
     --help
@@ -24,7 +25,8 @@ Options:
 """
 {docopt} = require 'docopt', version: package_json.version
 options = docopt doc
-process.env.SUPERFORKER_ROOT = path.join __dirname, '..'
+process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
+
 
 #This is essentially exec in that we will be done with running
 #when the sub command completes
@@ -38,15 +40,12 @@ exec = (program, args...) ->
         process.exit code
 
 init = (options) ->
-    if options.environment
-        exec path.join(__dirname, 'environment'), options['<giturl>']
-    else if options.handlers
-        exec path.join(__dirname, 'handlers'), options['<giturl>']
-    else
-        exec path.join(__dirname, 'init')
+    if not fs.existsSync process.env.SUPERWATCHER_HOME
+        fs.mkdirSync process.env.SUPERWATCHER_HOME
+    console.log "superwatcher ready in #{process.env.SUPERWATCHER_HOME}".green
 
+options.init and init options
 options.start and exec path.join(__dirname, 'start')
 options.stop and exec path.join(__dirname, 'stop')
 options.watchdog and exec path.join(__dirname, 'watchdog')
 options.info and exec path.join(__dirname, 'info')
-options.init and init options

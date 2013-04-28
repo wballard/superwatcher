@@ -1,28 +1,20 @@
 {
-  "name": "superforker",
+  "name": "superwatcher",
   "version": "0.0.1",
-  "description": "Make web APIs using shell script techniques, then stream them on socket.io.",
+  "description": "AutoUpdate and Watchdog system leveraging Git",
   "dependencies": {
-    "socket.io": "",
-    "socket.io-client": "",
     "coffee-script": "",
-    "express": "",
     "docopt": "",
     "forever": "",
     "underscore": "",
     "js-yaml": "",
     "chokidar": "",
-    "sleep": ""
+    "colors": ""
   },
   "engine": {
     "node": "0.8.11"
   },
-  "scripts": {
-    "start": "make start",
-    "stop": "make stop",
-    "test": "make test"
-  },
   "bin": {
-    "superforker": "./bin/superforker"
+    "superwatcher": "./bin/superwatcher"
   }
 }

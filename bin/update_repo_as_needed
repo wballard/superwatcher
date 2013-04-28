@@ -77,7 +77,7 @@ HAS_CHANGES=`git diff HEAD...origin/${CURRENT_BRANCH} --raw`
 log "checking ${REPO_DIR} for any available changes from ${ORIGIN_URL}"
 if [ "${HAS_CHANGES}x" == "x" ]; then
     log "no changes, nothing to update"
-    exit 5
+    exit 0
 else
     log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     git reset --hard origin/${CURRENT_BRANCH}

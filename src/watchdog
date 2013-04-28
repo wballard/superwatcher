@@ -3,7 +3,7 @@
 touch "${SUPERWATCHER_HOME}/watchdog_run"
 echo $USER > "${SUPERWATCHER_HOME}/user"
 
-cat "${SUPERWATCHER_HOME}/watch" | xargs ls >> "${SUPERWATCHER_HOME}/updates"
+cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" % >> "${SUPERWATCHER_HOME}/updates"
 exit 0
 
 source "${SUPERFORKER_ROOT}/src/env"

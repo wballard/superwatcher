@@ -67,7 +67,7 @@ watch = (options) ->
     watches = _.union watches, [options['<directory>']]
     #the initial clone
     fs.writeFileSync watchfile,
-        (_.filter watches, (x) -> x.length).join '\n'
+        (_.filter watches, (x) -> x.length).join('\n') + '\n'
     if fs.existsSync options['<directory>']
         wrench.rmdirSyncRecursive options['<directory>']
     exec 'git', 'clone', options['<giturl>'], options['<directory>']
@@ -86,9 +86,14 @@ main = (options) ->
 start = (options) ->
     watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
     watchdogsourcefile = path.join __dirname, 'watchdog'
+    updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
+    updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
     if fs.existsSync watchdogfile
         fs.unlinkSync watchdogfile
     fs.linkSync watchdogsourcefile, watchdogfile
+    if fs.existsSync updatefile
+        fs.unlinkSync updatefile
+    fs.linkSync updatesourcefile, updatefile
     #hand off the the shell script part
     exec path.join(__dirname, 'start')
 

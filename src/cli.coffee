@@ -17,8 +17,8 @@ Usage:
     superwatcher [options] start
     superwatcher [options] stop
     superwatcher [options] watch <giturl> <directory>
-    superwatcher [options] main <commandline>...
     superwatcher [options] environment <shellscript>
+    superwatcher [options] main <commandline>...
 
 Options:
     --help
@@ -64,9 +64,14 @@ environment = (options) ->
     environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
     fs.linkSync options['<shellscript>'], environmentfile
 
+main = (options) ->
+    mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
+    fs.writeFileSync mainfile, options['<commandline>'].join ' '
+
 options.init and init options
 options.watch and watch options
 options.environment and environment options
+options.main and main options
 options.start and exec path.join(__dirname, 'start')
 options.stop and exec path.join(__dirname, 'stop')
 options.info and exec path.join(__dirname, 'info')

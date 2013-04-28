@@ -58,10 +58,12 @@ Ok, here is how you use the thing, using `superforker`.
 
 ```
 npm install -g git://github.com/wballard/superwatcher.git 
+npm install -g git://github.com/wballard/superforker.git 
 
 superwatcher init
 superwatcher watch git://github.com/wballard/superforker.handlers.git ~/handlers
 superwatcher watch git://github.com/wballard/superforker.environment.git ~/environment
 superwatcher environment ~/environment/environment
+superwatcher main superforker 8080 ~/handlers
 
 ```

@@ -9,8 +9,9 @@ if [ -d "${DIRECTORY}" ]; then
 fi
 
 git clone "${GIT_URL}" "${DIRECTORY}"
-if [ -x ${DIRECTORY}/update_repo_action ]; then
-  pushd "${DIRECTORY}"
-  ./update_repo_action
-  popd
+
+cd "${DIRECTORY}"
+
+if [ -x "${DIRECTORY}/update_repo_action" ]; then
+  "${DIRECTORY}/update_repo_action"
 fi

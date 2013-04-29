@@ -1,15 +1,16 @@
 # Overview #
 
-Auto-update by watching git repositories. Keep your main process
-running with a watchdog.
+Auto-Update, process monitoring, and environment configuration in one
+simple script.
 
 ## Assumptions ##
 
+* You have `node` installed, and it is available to your shell account
 * Nothing is run as root, so you will need to serve high number ports
 from any scripts
-* Your program consists of one or more Git repositories, and a single
+* Your server consists of one or more Git repositories, and a single
 entry point that can be invoked from the command line
-* Your program follows the [12 factor app](http://www.12factor.net)
+* Your server follows the [12 factor app](http://www.12factor.net)
 approach, specifically in that it is
   * Just a program, not a daemon itself
   * Reads from `ENV`
@@ -34,6 +35,9 @@ The assumption is that your code is in Git, and that doing a release is
 driven by git push to a designated branch. Superwatcher will watch Git
 urls and pull in any changes.
 
+Any repository can define a `update_repo_action` script, which is called
+on any successful auto-update, including the first run.
+
 ## Main ##
 
 A single command line is provided as the main. This is run forever with
@@ -46,15 +50,13 @@ A script can be designated as the environment, which will be sourced
 before running your main program. Ideally, this script is in a git
 repository as well, so it is autoupdated.
 
-## Restart Triggers ##
-
-Restarts are trigged by files changing as a result of an Auto Update.
-If any of these files change, the `Main` script is stopped then
-restarted to pick up the environment.
+When the environment is changed, your server is automatically restarted,
+this lets the new environment variables be sourced before forking off a
+new server.
 
 # Enough Already! #
 
-Ok, here is how you use the thing, using `superforker`.
+Ok, here is how you use the thing, using `superforker`:
 
 ```
 npm install -g git://github.com/wballard/superwatcher.git 
@@ -65,5 +67,21 @@ superwatcher watch git://github.com/wballard/superforker.handlers.git ~/handlers
 superwatcher watch git://github.com/wballard/superforker.environment.git ~/environment
 superwatcher environment ~/environment/environment
 superwatcher main superforker 8080 ~/handlers
+superwatcher start
 
+```
+
+At this point, everything should run. All you need to do in order to
+push changes to the system is push changes to the two Git repositories.
+
+You can see what is going on with:
+
+```
+superwatcher info
+```
+
+And shut the whole thing down with:
+
+```
+superwatcher stop
 ```

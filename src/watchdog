@@ -8,6 +8,12 @@ if [ ! -d "${LOG_DIR}" ]; then
   mkdir -p "${LOG_DIR}"
 fi
 
+if [ $(uname) -eq "Darwin" ]; then
+  MD5=md5
+else
+  MD5=md5sum
+fi
+
 #we need to make sure things are still running
 RUNNING=`forever list | grep  "${LOG_DIR}"`
 if [ -z "${RUNNING}" ]; then
@@ -20,7 +26,7 @@ cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_
 
 #special case here, restart if the environment has changed
 if [ -f "${SUPERWATCHER_HOME}/environment" ]; then
-    CURRENT_SIGNATURE=$(md5 -q "${SUPERWATCHER_HOME}/environment")
+    CURRENT_SIGNATURE=$(${MD5} "${SUPERWATCHER_HOME}/environment")
     PRIOR_SIGNATURE=$(cat "${SUPERWATCHER_HOME}/environment.md5") || $(echo -)
     if [ "${CURRENT_SIGNATURE}" != "${PRIOR_SIGNATURE}" ]; then
         echo "environment changed ${CURRENT_SIGNATURE} ${PRIOR_SIGNATURE}"

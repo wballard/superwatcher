@@ -80,7 +80,15 @@ environment = (options) ->
 main = (options) ->
     #shell script with an exec to replace so this will end up being
     #the daemon
-    fs.writeFileSync mainfile, "exec " + options['<commandline>'].join ' '
+    commandline = options['<commandline>'].join ' '
+    fs.writeFileSync mainfile,
+        """
+        if [ -f "#{environmentfile}" ]; then
+            source "#{environmentfile}"
+        fi
+        exec #{commandline}
+
+        """
     fs.chmodSync mainfile, '644'
 
 start = (options) ->

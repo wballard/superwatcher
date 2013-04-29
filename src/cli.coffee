@@ -105,10 +105,21 @@ start = (options) ->
     #hand off the the shell script part
     exec path.join(__dirname, 'start')
 
+info = (options) ->
+    if fs.existsSync watchfile
+        console.log "watching".green
+        console.log fs.readFileSync(watchfile, 'utf8').trim().blue
+    if fs.existsSync environmentfile
+        console.log "environment present".green
+        console.log fs.readFileSync(environmentfile, 'utf8').trim().blue
+    if fs.existsSync mainfile
+        console.log "main present".green
+        console.log fs.readFileSync(mainfile, 'utf8').trim().split('\n')[-1..][0].blue
+
 options.init and init options
 options.watch and watch options
 options.environment and environment options
 options.main and main options
 options.start and start options
 options.stop and exec path.join(__dirname, 'stop')
-options.info and exec path.join(__dirname, 'info')
+options.info and info options

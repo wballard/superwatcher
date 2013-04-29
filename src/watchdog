@@ -8,7 +8,7 @@ if [ ! -d "${LOG_DIR}" ]; then
   mkdir -p "${LOG_DIR}"
 fi
 
-if [ $(uname) -eq "Darwin" ]; then
+if [ $(uname) = "Darwin" ]; then
   MD5=md5
 else
   MD5=md5sum

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# vim: ft=sh
+
+GIT_URL=$1
+DIRECTORY=$2
+
+if [ -d "${DIRECTORY}" ]; then
+    rm -rf "${DIRECTORY}"
+fi
+
+git clone "${GIT_URL}" "${DIRECTORY}"
+if [ -x ${DIRECTORY}/update_repo_action ]; then
+  pushd "${DIRECTORY}"
+  ./update_repo_action
+  popd
+fi

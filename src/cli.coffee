@@ -65,12 +65,9 @@ watch = (options) ->
     else
         watches = []
     watches = _.union watches, [options['<directory>']]
-    #the initial clone
     fs.writeFileSync watchfile,
         (_.filter watches, (x) -> x.length).join('\n') + '\n'
-    if fs.existsSync options['<directory>']
-        wrench.rmdirSyncRecursive options['<directory>']
-    exec 'git', 'clone', options['<giturl>'], options['<directory>']
+    exec path.join(__dirname, 'watch'), options['<giturl>'], options['<directory>']
 
 environment = (options) ->
     if fs.existsSync environmentfile

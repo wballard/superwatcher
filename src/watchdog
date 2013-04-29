@@ -3,28 +3,28 @@
 touch "${SUPERWATCHER_HOME}/watchdog_run"
 echo $USER > "${SUPERWATCHER_HOME}/user"
 
+LOG_DIR="${SUPERWATCHER_HOME}/var/log"
+if [ ! -d "${LOG_DIR}" ]; then
+  mkdir -p "${LOG_DIR}"
+fi
+
+#we need to make sure things are still running
+RUNNING=`forever list | grep  "${LOG_DIR}"`
+if [ -z "${RUNNING}" ]; then
+  forever start --append -l "${LOG_DIR}/forever.log" -o "${LOG_DIR}/out.log" \
+    -e "${LOG_DIR}/err.log" -c bash "${SUPERWATCHER_HOME}/main"
+fi
+
 #check on all watch repositories for updates
 cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" % >> "${SUPERWATCHER_HOME}/updates"
-exit 0
 
-source "${SUPERFORKER_ROOT}/src/env"
-#make sure our exciting environment repository is up to date, and if it changed
-#then we are going to need to restart
-"${BIN}/update_repo_as_needed" "${ETC_DIR}/environment"
-if [ $? == 100 ]; then
-  echo "environment changed, stopping the server to pick up the changes"
-  superforker stop
-fi
-
-"${BIN}/update_repo_as_needed" "${ETC_DIR}/handlers"
-if [ $? == 100 ]; then
-    echo "handlers changed, no need to stop and restart"
-    if [ -e "${ETC_DIR}/handlers/on_update" ]; then
-        pushd "${ETC_DIR}/handlers"
-        ./on_update
-        popd
+#special case here, restart if the environment has changed
+if [ -f "${SUPERWATCHER_HOME}/environment" ]; then
+    CURRENT_SIGNATURE=$(md5 -q "${SUPERWATCHER_HOME}/environment")
+    PRIOR_SIGNATURE=$(cat "${SUPERWATCHER_HOME}/environment.md5") || $(echo -)
+    if [ "${CURRENT_SIGNATURE}" != "${PRIOR_SIGNATURE}" ]; then
+        echo "environment changed ${CURRENT_SIGNATURE} ${PRIOR_SIGNATURE}"
+        echo -n ${CURRENT_SIGNATURE} > "${SUPERWATCHER_HOME}/environment.md5"
+        forever restart "${SUPERWATCHER_HOME}/main"
     fi
 fi
-
-#call into the start, it's safe to call if we are already started, we promise
-superforker start

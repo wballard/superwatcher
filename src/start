@@ -7,6 +7,6 @@
 #set up a watchdog script in cron to keep things going
 crontab -l | grep -v "${SUPERWATCHER_HOME}" | crontab
 crontab -l > crontemp
-printf "* * * * *\texport SUPERWATCHER_HOME=\"${SUPERWATCHER_HOME}\"; \"${SUPERWATCHER_HOME}/watchdog\" > /dev/null 2>&1\n" >> crontemp
+printf "* * * * *\texport SUPERWATCHER_HOME=\"${SUPERWATCHER_HOME}\"; bash --login \"${SUPERWATCHER_HOME}/watchdog\" > /dev/null 2>&1\n" >> crontemp
 cat crontemp | crontab
 rm crontemp

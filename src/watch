@@ -5,7 +5,7 @@ GIT_URL=$1
 DIRECTORY=$2
 
 if [ -d "${DIRECTORY}" ]; then
-    rm -rf "${DIRECTORY}"
+  rm -rf "${DIRECTORY}"
 fi
 
 git clone "${GIT_URL}" "${DIRECTORY}"

@@ -106,7 +106,6 @@ info = (options) ->
         console.log "main present".green
         console.log fs.readFileSync(mainfile, 'utf8').trim().split('\n')[-1..][0].blue
 
-options.init and init options
 options.watch and watch options
 options.environment and environment options
 options.main and main options

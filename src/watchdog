@@ -16,7 +16,9 @@ if [ -z "${RUNNING}" ]; then
 fi
 
 #check on all watch repositories for updates
-cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" % >> "${SUPERWATCHER_HOME}/updates"
+if [ -f "${SUPERWATCHER_HOME/watch}" ]; then
+  cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" % >> "${SUPERWATCHER_HOME}/updates"
+fi
 
 #special case here, restart if the environment has changed
 if [ -f "${SUPERWATCHER_HOME}/environment" ]; then

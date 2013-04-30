@@ -51,12 +51,7 @@ exec = (program, args...) ->
         process.exit code
 
 init = (options) ->
-    if not fs.existsSync process.env.SUPERWATCHER_HOME
-        fs.mkdirSync process.env.SUPERWATCHER_HOME
-    #hate listening to npm update the world
-    silence()
-    #make sure we have a global forever, this is the key runner
-    exec "npm", "install", "-g", "forever"
+    exec path.join(__dirname, 'init')
 
 watch = (options) ->
     #a configuration file keeping track of everything we are watching

@@ -15,6 +15,7 @@ doc = """
 
 Usage:
     superwatcher [options] init
+    superwatcher [options] logs
     superwatcher [options] info
     superwatcher [options] start
     superwatcher [options] stop
@@ -49,9 +50,6 @@ exec = (program, args...) ->
         process.stderr.write data
     running.on 'code', (code) ->
         process.exit code
-
-init = (options) ->
-    exec path.join(__dirname, 'init')
 
 watch = (options) ->
     #a configuration file keeping track of everything we are watching
@@ -114,4 +112,6 @@ options.environment and environment options
 options.main and main options
 options.start and start options
 options.stop and exec path.join(__dirname, 'stop')
+options.init and exec path.join(__dirname, 'init')
+options.logs and exec path.join(__dirname, 'logs')
 options.info and info options

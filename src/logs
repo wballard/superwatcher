@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# vim: ft=sh
+tail -f ${SUPERWATCHER_HOME}/var/log/*.log

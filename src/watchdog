@@ -16,7 +16,7 @@ if [ -z "${RUNNING}" ]; then
 fi
 
 #check on all watch repositories for updates
-if [ -f "${SUPERWATCHER_HOME/watch}" ]; then
+if [ -f "${SUPERWATCHER_HOME}/watch" ]; then
   cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" % >> "${SUPERWATCHER_HOME}/updates"
 fi
 

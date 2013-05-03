@@ -20,7 +20,7 @@ Usage:
     superwatcher [options] start
     superwatcher [options] stop
     superwatcher [options] watch <giturl> <directory>
-    superwatcher [options] environment <shellscript>
+    superwatcher [options] environment <source_this_script>
     superwatcher [options] main <commandline>...
 
 Options:
@@ -65,7 +65,7 @@ watch = (options) ->
 environment = (options) ->
     if fs.existsSync environmentfile
         fs.unlinkSync environmentfile
-    fs.linkSync options['<shellscript>'], environmentfile
+    fs.linkSync options['<source_this_script>'], environmentfile
 
 main = (options) ->
     #shell script with an exec to replace so this will end up being

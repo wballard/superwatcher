@@ -2,7 +2,7 @@
 # vim: ft=sh
 
 #give the watchdog a first run to avoid waiting a minute for cron
-"${SUPERWATCHER_HOME}/watchdog"
+"${SUPERWATCHER_HOME}/watchdog" $1
 
 #set up a watchdog script in cron to keep things going
 crontab -l | grep -v "${SUPERWATCHER_HOME}" | crontab

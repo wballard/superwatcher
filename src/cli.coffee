@@ -18,6 +18,7 @@ Usage:
     superwatcher [options] logs
     superwatcher [options] info
     superwatcher [options] start
+    superwatcher [options] restart
     superwatcher [options] stop
     superwatcher [options] watch <giturl> <directory>
     superwatcher [options] environment <source_this_script>
@@ -93,7 +94,10 @@ start = (options) ->
         fs.unlinkSync updatefile
     fs.linkSync updatesourcefile, updatefile
     #hand off the the shell script part
-    exec path.join(__dirname, 'start')
+    if options.restart
+        exec path.join(__dirname, 'start'), 'restart'
+    else
+        exec path.join(__dirname, 'start')
 
 info = (options) ->
     if fs.existsSync watchfile
@@ -110,6 +114,7 @@ options.watch and watch options
 options.environment and environment options
 options.main and main options
 options.start and start options
+options.restart and start options
 options.stop and exec path.join(__dirname, 'stop')
 options.init and exec path.join(__dirname, 'init')
 options.logs and exec path.join(__dirname, 'logs')

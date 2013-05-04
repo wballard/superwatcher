@@ -70,7 +70,7 @@ watch = (options) ->
 environment = (options) ->
     if fs.existsSync environmentfile
         fs.unlinkSync environmentfile
-    fs.linkSync options['<source_this_script>'], environmentfile
+    fs.symlinkSync options['<source_this_script>'], environmentfile
 
 main = (options) ->
     #shell script with an exec to replace so this will end up being
@@ -89,14 +89,11 @@ main = (options) ->
 start = (options) ->
     watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
     watchdogsourcefile = path.join __dirname, 'watchdog'
-    updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
-    updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
     if fs.existsSync watchdogfile
         fs.unlinkSync watchdogfile
-    fs.linkSync watchdogsourcefile, watchdogfile
+    fs.symlinkSync watchdogsourcefile, watchdogfile
     if fs.existsSync updatefile
         fs.unlinkSync updatefile
-    fs.linkSync updatesourcefile, updatefile
     #hand off the the shell script part
     if options.restart
         exec path.join(__dirname, 'start'), 'restart'

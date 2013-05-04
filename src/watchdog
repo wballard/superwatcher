@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 
+#prefer the local forever, but fall back to the path
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PATH="${DIR}/../node_modules/.bin":${PATH}
+
+#tracking that we ran
 touch "${SUPERWATCHER_HOME}/watchdog_run"
 echo $USER > "${SUPERWATCHER_HOME}/user"
 

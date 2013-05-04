@@ -11,7 +11,7 @@ if [ ! -d "${REPO_DIR}" ]; then
 fi
 
 cd ${REPO_DIR}
-# want to get the full directory for our repo
+#want to get the full directory for our repo
 REPO_DIR=`pwd`
 
 git rev-parse --git-dir >> /dev/null 2>&1
@@ -38,9 +38,14 @@ if [ "${HAS_CHANGES}x" == "x" ]; then
 else
     log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     git reset --hard origin/${CURRENT_BRANCH}
-    # if we have a post update script, run it
-    if [ -x ${REPO_DIR}/update_repo_action ]; then
-      ${REPO_DIR}/update_repo_action
+    #if we have a post update script, run it
+    if [ -x update_repo_action ]; then
+      ./update_repo_action
+    fi
+    #if we are a npm packge, install it, which should tune up the package
+    #to a working state if the package.json is 'good at all'
+    if [ -x package.json ]; then
+      npm install
     fi
     exit 100
 fi

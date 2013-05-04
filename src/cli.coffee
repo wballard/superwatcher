@@ -20,6 +20,7 @@ Usage:
     superwatcher [options] start
     superwatcher [options] restart
     superwatcher [options] stop
+    superwatcher [options] watch <directory>
     superwatcher [options] watch <giturl> <directory>
     superwatcher [options] environment <source_this_script>
     superwatcher [options] main <commandline>...
@@ -61,7 +62,10 @@ watch = (options) ->
     watches = _.union watches, [options['<directory>']]
     fs.writeFileSync watchfile,
         (_.filter watches, (x) -> x.length).join('\n') + '\n'
-    exec path.join(__dirname, 'watch'), options['<giturl>'], options['<directory>']
+    if options['<giturl>']
+        exec path.join(__dirname, 'clone_and_watch'), options['<giturl>'], options['<directory>']
+    else
+        exec path.join(__dirname, 'watch'), options['<directory>']
 
 environment = (options) ->
     if fs.existsSync environmentfile

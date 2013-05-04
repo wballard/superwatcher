@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#prefer the local forever, but fall back to the path
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PATH="${DIR}/../node_modules/.bin":${PATH}
 #have forever stop the madness
 forever stop "${SUPERWATCHER_HOME}/main"
 #wipe out the watchdog from the crontab

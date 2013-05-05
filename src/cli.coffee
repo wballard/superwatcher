@@ -36,7 +36,8 @@ process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
 watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch'
 environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
 mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
-updatefile = path.join process.env.SUPERWATCHER_HOME, "..", "bin", "update_repo_as_needed"
+updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
+updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
 
 silence = ->
     process.stdout.write = ->
@@ -94,6 +95,7 @@ start = (options) ->
     fs.symlinkSync watchdogsourcefile, watchdogfile
     if fs.existsSync updatefile
         fs.unlinkSync updatefile
+    fs.symlinkSync updatesourcefile, updatefile
     #hand off the the shell script part
     if options.restart
         exec path.join(__dirname, 'start'), 'restart'

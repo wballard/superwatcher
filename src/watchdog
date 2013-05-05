@@ -1,7 +1,11 @@
 #! /usr/bin/env bash
 
 #prefer the local forever, but fall back to the path
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_PATH="$( readlink "${BASH_SOURCE[0]}" )"
+if [ -z "${SCRIPT_PATH}" ]; then
+    SCRIPT_PATH="${BASH_SOURCE[0]}"
+fi
+DIR="$( cd "$( dirname "${SCRIPT_PATH}" )" && pwd )"
 export PATH="${DIR}/../node_modules/.bin":${PATH}
 
 #tracking that we ran

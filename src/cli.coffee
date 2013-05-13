@@ -23,7 +23,7 @@ Usage:
     superwatcher [options] watch <directory>
     superwatcher [options] watch <giturl> <directory>
     superwatcher [options] environment <source_this_script>
-    superwatcher [options] main <commandline>...
+    superwatcher [options] task <taskname> <commandline>...
 
 Options:
     --help
@@ -35,7 +35,6 @@ options = docopt doc
 process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
 watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch'
 environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
-mainfile = path.join process.env.SUPERWATCHER_HOME, 'main'
 updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
 updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
 
@@ -73,11 +72,14 @@ environment = (options) ->
         fs.unlinkSync environmentfile
     fs.symlinkSync options['<source_this_script>'], environmentfile
 
-main = (options) ->
+task = (options) ->
     #shell script with an exec to replace so this will end up being
     #the daemon
+    taskfile = path.join process.env.SUPERWATCHER_HOME, 'tasks', options['<taskname>']
+    if not fs.existsSync path.dirname(taskfile)
+        wrench.mkdirSyncRecursive path.dirname(taskfile)
     commandline = options['<commandline>'].join ' '
-    fs.writeFileSync mainfile,
+    fs.writeFileSync taskfile,
         """
         if [ -f "#{environmentfile}" ]; then
             source "#{environmentfile}"
@@ -85,7 +87,7 @@ main = (options) ->
         exec #{commandline}
 
         """
-    fs.chmodSync mainfile, '644'
+    fs.chmodSync taskfile, '644'
 
 start = (options) ->
     watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
@@ -109,13 +111,17 @@ info = (options) ->
     if fs.existsSync environmentfile
         console.log "environment present".green
         console.log fs.readFileSync(environmentfile, 'utf8').trim().blue
-    if fs.existsSync mainfile
-        console.log "main present".green
-        console.log fs.readFileSync(mainfile, 'utf8').trim().split('\n')[-1..][0].blue
+    tasks = path.join process.env.SUPERWATCHER_HOME, 'tasks'
+    if fs.existsSync tasks
+        console.log "tasks present".green
+        for task in fs.readdirSync(tasks)
+            console.log task.green
+            console.log fs.readFileSync(path.join(tasks, task), 'utf8').trim().blue
+
 
 options.watch and watch options
 options.environment and environment options
-options.main and main options
+options.task and task options
 options.start and start options
 options.restart and start options
 options.stop and exec path.join(__dirname, 'stop')

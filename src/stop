@@ -3,6 +3,10 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PATH="${DIR}/../node_modules/.bin":${PATH}
 #have forever stop the madness
-forever stop "${SUPERWATCHER_HOME}/main"
+for TASK in "${SUPERWATCHER_HOME}/tasks/"*
+do
+    echo $TASK stopping...
+    forever stop "${TASK}"
+done
 #wipe out the watchdog from the crontab
 crontab -l | grep -v "${SUPERWATCHER_HOME}" | crontab

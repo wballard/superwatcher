@@ -18,11 +18,15 @@ if [ ! -d "${LOG_DIR}" ]; then
 fi
 
 #we need to make sure things are still running
-RUNNING=`forever list | grep  "${LOG_DIR}"`
-if [[ ( -z "${RUNNING}" ) || ( "${1}" ) ]]; then
-  forever start --append -l "${LOG_DIR}/forever.log" -o "${LOG_DIR}/out.log" \
-    -e "${LOG_DIR}/err.log" -c bash "${SUPERWATCHER_HOME}/main"
-fi
+for TASK in "${SUPERWATCHER_HOME}/tasks/"*
+do
+    RUNNING=`forever list | grep  "${TASK}"`
+    if [ -z "${RUNNING}" ]; then
+      echo $TASK starting...
+      forever start --append -l "${LOG_DIR}/forever.log" -o "${LOG_DIR}/out.log" \
+        -e "${LOG_DIR}/err.log" -c bash "${TASK}"
+    fi
+done
 
 #check on all watch repositories for updates
 if [ -f "${SUPERWATCHER_HOME}/watch" ]; then

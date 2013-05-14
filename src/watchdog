@@ -20,11 +20,12 @@ fi
 #we need to make sure things are still running
 for TASK in "${SUPERWATCHER_HOME}/tasks/"*
 do
+    TASK_NAME=$(basename "${TASK}")
     RUNNING=`forever list | grep  "${TASK}"`
     if [ -z "${RUNNING}" ]; then
-      echo $TASK starting...
-      forever start --append -l "${LOG_DIR}/forever.log" -o "${LOG_DIR}/out.log" \
-        -e "${LOG_DIR}/err.log" -c bash "${TASK}"
+      echo $TASK_NAME starting...
+      forever start --append -o "${LOG_DIR}/${TASK_NAME}.out.log" \
+        -e "${LOG_DIR}/${TASK_NAME}.err.log" -c bash "${TASK}"
     fi
 done
 

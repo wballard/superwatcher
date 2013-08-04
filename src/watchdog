@@ -7,38 +7,17 @@ if [ -z "${SCRIPT_PATH}" ]; then
 fi
 SCRIPT_DIR="$( cd "$( dirname "${SCRIPT_PATH}" )" && pwd )"
 
-#tracking that we ran
+#tracking that we ran, and who we ran as -- debug info in case you get lost
 touch "${SUPERWATCHER_HOME}/watchdog_run"
 echo $USER > "${SUPERWATCHER_HOME}/user"
 
-LOG_DIR="${SUPERWATCHER_HOME}/var/log"
-if [ ! -d "${LOG_DIR}" ]; then
-  mkdir -p "${LOG_DIR}"
+#set up the environment before running an update
+if [ -f "${SUPERWATCHER_HOME}/environment" ]; then
+  source "${SUPERWATCHER_HOME}/environment"
 fi
-
-#we need to make sure things are still running
-for TASK in "${SUPERWATCHER_HOME}/tasks/"*
-do
-    TASK_NAME=$(basename "${TASK}")
-    RUNNING=`forever list | grep  "${TASK}"`
-    if [ -z "${RUNNING}" ]; then
-      echo $TASK_NAME starting...
-      forever start --append -o "${LOG_DIR}/${TASK_NAME}.out.log" \
-        -e "${LOG_DIR}/${TASK_NAME}.err.log" -c bash "${TASK}"
-    fi
-done
 
 #check on all watch repositories for updates
 if [ -f "${SUPERWATCHER_HOME}/watch" ]; then
   cat "${SUPERWATCHER_HOME}/watch" | xargs -I % "${SUPERWATCHER_HOME}/update_repo_as_needed" %
 fi
 
-#special case here, restart if the environment has changed
-if [ -f "${SUPERWATCHER_HOME}/environment" ]; then
-    CHANGES=$(diff "${SUPERWATCHER_HOME}/environment" "${SUPERWATCHER_HOME}/environment.prior")
-    if [ ! -z "${CHANGES}" ]; then
-      echo "environment changed ${CURRENT_SIGNATURE} ${PRIOR_SIGNATURE}"
-      forever restart "${SUPERWATCHER_HOME}/main"
-    fi
-    cp "${SUPERWATCHER_HOME}/environment" "${SUPERWATCHER_HOME}/environment.prior"
-fi

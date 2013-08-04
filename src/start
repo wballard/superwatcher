@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # vim: ft=sh
 
-#give the watchdog a first run to avoid waiting a minute for cron
+#give the watchdog a first run to avoid waiting a minute for cron. indeed, that impatient :_
 "${SUPERWATCHER_HOME}/watchdog" $1
 
 #set up a watchdog script in cron to keep things going
 crontab -l | grep -v "${SUPERWATCHER_HOME}" | crontab
 crontab -l > crontemp
-printf "* * * * *\texport SUPERWATCHER_HOME=\"${SUPERWATCHER_HOME}\"; bash --login \"${SUPERWATCHER_HOME}/watchdog\" >> \"${SUPERWATCHER_HOME}/var/log/updates.log\"  2>&1\n" >> crontemp
+printf "* * * * *\texport SUPERWATCHER_HOME=\"${SUPERWATCHER_HOME}\"; bash --login \"${SUPERWATCHER_HOME}/watchdog\" >> \"${SUPERWATCHER_HOME}/updates.log\"  2>&1\n" >> crontemp
 cat crontemp | crontab
 rm crontemp

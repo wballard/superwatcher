@@ -10,7 +10,7 @@
     "wrench": "",
     "handlebars": "",
     "colors": "",
-    "shellscript": "~0.1.0"
+    "shellscript": ""
   },
   "engine": {
     "node": ">=0.8.11"

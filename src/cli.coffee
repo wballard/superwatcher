@@ -81,7 +81,8 @@ stop = (options) ->
     exec path.join(__dirname, 'stop')
 
 init = (options) ->
-    exec path.join(__dirname, 'init')
+  if not fs.existsSync process.env.SUPERWATCHER_HOME
+    wrench.mkdirSyncRecursive process.env.SUPERWATCHER_HOME
 
 info = (options) ->
     if fs.existsSync watchfile

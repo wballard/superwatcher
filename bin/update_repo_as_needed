@@ -33,19 +33,17 @@ HAS_CHANGES=`git diff HEAD...origin/${CURRENT_BRANCH} --raw`
 
 log "checking ${REPO_DIR} for any available changes from ${ORIGIN_URL}"
 if [ "${HAS_CHANGES}x" == "x" ]; then
-    log "no changes, nothing to update"
     exit 0
 else
+    #if we have a pre update script, run it
+    if [ -x ./superwatcher_before_update ]; then
+      ./superwatcher_before_update
+    fi
     log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     git reset --hard origin/${CURRENT_BRANCH}
     #if we have a post update script, run it
-    if [ -x update_repo_action ]; then
-      ./update_repo_action
+    if [ -x ./superwatcher_after_update ]; then
+      ./superwatcher_after_update
     fi
-    #if we are a npm packge, install it, which should tune up the package
-    #to a working state if the package.json is 'good at all'
-    if [ -x package.json ]; then
-      npm install
-    fi
-    exit 100
+    exit 0
 fi

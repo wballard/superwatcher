@@ -51,8 +51,10 @@ watch = (options) ->
     watches = _.union watches, [options['<directory>']]
     fs.writeFileSync watchfile,
         (_.filter watches, (x) -> x.length).join('\n') + '\n'
-    if options['<giturl>']
-        exec path.join(__dirname, 'clone_and_watch'), options['<giturl>'], options['<directory>']
+    if fs.existsSync(options['<directory>'])
+        console.log "WARNING: directory already exists, will watch it anyhow, but this directory will not be a fresh clone".red
+    else
+        exec 'git', 'clone', options['<giturl>'], options['<directory>']
 
 environment = (options) ->
     if fs.existsSync environmentfile
@@ -83,11 +85,12 @@ init = (options) ->
 
 info = (options) ->
     if fs.existsSync watchfile
-        console.log "watching".green
-        console.log fs.readFileSync(watchfile, 'utf8').trim().blue
+        console.log "watching:".blue
+        for line in fs.readFileSync(watchfile, 'utf8').split('\n')
+          console.log "\t#{line}"
     if fs.existsSync environmentfile
-        console.log "environment present".green
-        console.log fs.readFileSync(environmentfile, 'utf8').trim().blue
+        console.log "environment present:".blue
+        console.log fs.readFileSync(environmentfile, 'utf8').trim()
 
 #command dispatch via short circuit
 options.watch and watch options

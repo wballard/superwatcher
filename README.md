@@ -71,8 +71,7 @@ set it explicitly. This will be sourced before every autoupdate
 sequence, and lets you do fun stuff like pick the right `node`, set
 `PATH`, etc.
 
-
-# Enough Already! #
+## Enough Already! #
 
 Ok, here is how you use the thing:
 
@@ -102,3 +101,9 @@ And shut the whole thing down with:
 ```
 superwatcher stop
 ```
+
+## Make a Sandwich
+
+To get a super simple, self updating server, combine `superwatcher` with
+`forever --watch --watchDirectory`. This will give you auto update, and self restart on
+update.

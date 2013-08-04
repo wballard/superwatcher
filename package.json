@@ -1,7 +1,7 @@
 {
   "name": "superwatcher",
   "version": "0.1.0",
-  "description": "AutoUpdate and Watchdog system leveraging Git",
+  "description": "Watch a GiT repository for changes",
   "dependencies": {
     "coffee-script": "",
     "docopt": "",

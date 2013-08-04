@@ -22,6 +22,11 @@ Usage:
     superwatcher environment <source_this_script>
     superwatcher --help | --version
 
+Info:
+    You can watch any git url, which will let you watch at specific branches. As
+    automatic updates run, they respect the current git origin and branch, so
+    you can always manually switch a watched local directory to a different git.
+
 """
 {docopt} = require 'docopt'
 options = docopt doc, version: package_json.version

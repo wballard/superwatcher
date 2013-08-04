@@ -9,8 +9,7 @@
     "js-yaml": "",
     "wrench": "",
     "handlebars": "",
-    "colors": "",
-    "shellscript": ""
+    "colors": ""
   },
   "engine": {
     "node": ">=0.8.11"

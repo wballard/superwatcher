@@ -1,78 +1,95 @@
-# Overview #
+## Why Care
 
-Auto-Update, process monitoring, and environment configuration in one
-simple script.
+Sure, you can watch for local file changes and react to those with a
+script, but can you watch for remote file changes in a `git` repository?
 
-## Assumptions ##
+## What It Does
 
-* You have `node` installed, and it is available to your shell account
-* Nothing is run as root, so you will need to serve high number ports
-from any scripts
-* Your server consists of one or more Git repositories, and a single
-entry point that can be invoked from the command line
-* Your server follows the [12 factor app](http://www.12factor.net)
-approach, specifically in that it is
-  * Just a program, not a daemon itself
-  * Reads from `ENV`
-  * Logs to `STDOUT` and `STDERR`
-  * Does not expect input from `STDIN`
-* You will only have one `superwatcher` based program per shell account
+`superwatcher`:
 
-## Watchdog ##
+* watches `git` repositories for you
+* keeps those repositores up to date
+* triggers an update hook script on each update
 
-The watchdog is the core that makes superwatcher work.
+With this simple tool combined with [forever](https://github.com/nodejitsu/forever)
+you can create an auto updating, auto restarting server. All you need to
+do to autodeploy to as many nodes as you like is `git push`.
 
-The watchdog is a simple `cron` job that makes sure everything is running
-as well as driving the auto update loop. This lets the system survive a
-reboot, and doesn't require you to fuss with `init` and friends or other startup
-daemons. And, it doesn't require you to do anything as `root`. This
-approach has the advantage of working across multiple Unix/Linux/OSX
-versions, `cron` is always there!
+Unlike pretty much every other autodeploy tool, `superwatcher` doesn't
+assume any specific workflow, you can watch any repository and branch
+you like, triggering an optional script after each update. Since that is
+just a shell script, you can do what you like
 
-## Auto Update ##
+## What It Is
 
-The assumption is that your code is in Git, and that doing a release is
-driven by git push to a designated branch. Superwatcher will watch Git
-urls and pull in any changes.
+`superwatcher` is a command line program that leverages good old `cron`
+to create a series of repository watchdogs.
 
-Any repository can define a `update_repo_action` script, which is called
-on any successful auto-update, including the first run.
+Seems like folks are generally in love with git hooks, which works great
+except when one of your nodes is down and misses the hook and jams up
+the works. Using hooks is a *push* method. Using `cron` is a *pull*
+method. The benefit is that nodes that are down will eventually catch up
+as they pull in new changes. Self healing.
 
-## Main ##
+Cron is also nice in that is:
 
-A single command line is provided as the main. This is run forever with
-[forever](https://github.com/nodejitsu/forever), and monitored by the
-watchdog.
+* survives reboots
+* is already there and doesn't require installing another daemon as root
 
-## Environment ##
+The watchdogs will leave configuration in `~/.superwatcher`, just as
+plain text so you can hack and poke as you see fit.
 
-A script can be designated as the environment, which will be sourced
-before running your main program. Ideally, this script is in a git
-repository as well, so it is autoupdated.
+## How To Use It
 
-When the environment is changed, your server is automatically restarted,
-this lets the new environment variables be sourced before forking off a
-new server.
+`npm install -g superwatcher`
+
+Yep, you'll need node.
+
+`superwatcher --help`
+
+...get the lay of the land
+
+## Update Triggers
+
+These are just shell scripts, in the root of each watched repository.
+
+Hooks wrap the auto update sequence, which goes like this:
+
+1. Ask the git remote if there are missing local changes
+2. If no, go back to sleep
+3. If yes, run the `superwatcher_before_update` currently on disk, this
+   will be the *prior* version, not the one incoming from the remote
+4. Use git to fetch and reset to the current remote revision
+5. Run the `superwatcher_after_update` currently on disk, this may have
+   been freshly pulled
+
+## Environment
+
+Cron is nice, except when it isn't. The exact environment you get in a
+cron job isn't always what you would expect, so `superwatcher` lets you
+set it explicitly. This will be sourced before every autoupdate
+sequence, and lets you do fun stuff like pick the right `node`, set
+`PATH`, etc.
+
 
 # Enough Already! #
 
-Ok, here is how you use the thing, using `superforker`:
+Ok, here is how you use the thing:
 
 ```
-npm install -g git://github.com/wballard/superwatcher.git 
-npm install -g git://github.com/wballard/superforker.git 
+npm install -g superwatcher
 
 superwatcher init
-superwatcher watch git://github.com/wballard/superforker.handlers.git ~/handlers
-superwatcher watch git://github.com/wballard/superforker.environment.git ~/environment
-superwatcher environment ~/environment/environment
-superwatcher main superforker 8080 ~/handlers
+
+superwatcher watch git://github.com/wballard/superwatcher.demo.git ~/demo
+superwatcher environment ~/demo/environment
 superwatcher start
 
 ```
 
 At this point, everything should run. All you need to do in order to
-push changes to the system is push changes to the two Git repositories.
+push changes is update the git repository, which is ... well, you'll
+need to switch to your own repository :).
 
 You can see what is going on with:
 

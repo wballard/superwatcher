@@ -1,7 +1,3 @@
 #!/usr/bin/env bash
 # vim: ft=sh
-test -f "${SUPERWATCHER_HOME}/watch" && rm "${SUPERWATCHER_HOME}/watch"
-test -f "${SUPERWATCHER_HOME}/environment" && rm "${SUPERWATCHER_HOME}/environment"
-test -f "${SUPERWATCHER_HOME}/main" && rm "${SUPERWATCHER_HOME}/main"
-test ! -d "${SUPERWATCHER_HOME}/var/log" && mkdir -p "${SUPERWATCHER_HOME}/var/log"
-test ! -d "${SUPERWATCHER_HOME}/etc" && mkdir -p "${SUPERWATCHER_HOME}/etc"
+test ! -d "${SUPERWATCHER_HOME}" && mkdir -p "${SUPERWATCHER_HOME}"

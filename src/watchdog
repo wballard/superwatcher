@@ -1,12 +1,11 @@
 #! /usr/bin/env bash
 
-#prefer the local forever, but fall back to the path
+#get your local path to this running superwatcher
 SCRIPT_PATH="$( readlink "${BASH_SOURCE[0]}" )"
 if [ -z "${SCRIPT_PATH}" ]; then
     SCRIPT_PATH="${BASH_SOURCE[0]}"
 fi
-DIR="$( cd "$( dirname "${SCRIPT_PATH}" )" && pwd )"
-export PATH="${DIR}/../node_modules/.bin":${PATH}
+SCRIPT_DIR="$( cd "$( dirname "${SCRIPT_PATH}" )" && pwd )"
 
 #tracking that we ran
 touch "${SUPERWATCHER_HOME}/watchdog_run"

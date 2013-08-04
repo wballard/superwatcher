@@ -14,33 +14,22 @@ doc = """
 #{package_json.description}
 
 Usage:
-    superwatcher [options] init
-    superwatcher [options] logs
-    superwatcher [options] info
-    superwatcher [options] start
-    superwatcher [options] restart
-    superwatcher [options] stop
-    superwatcher [options] watch <directory>
-    superwatcher [options] watch <giturl> <directory>
-    superwatcher [options] environment <source_this_script>
-    superwatcher [options] task <taskname> <commandline>...
-
-Options:
-    --help
-    --version
+    superwatcher init
+    superwatcher info
+    superwatcher start
+    superwatcher stop
+    superwatcher watch <giturl> <directory>
+    superwatcher environment <source_this_script>
+    superwatcher --help | --version
 
 """
-{docopt} = require 'docopt', version: package_json.version
-options = docopt doc
+{docopt} = require 'docopt'
+options = docopt doc, version: package_json.version
+
+#the all important 'where are we' variable
 process.env.SUPERWATCHER_HOME = path.join(process.env.HOME, '.superwatcher')
 watchfile = path.join process.env.SUPERWATCHER_HOME, 'watch'
 environmentfile = path.join process.env.SUPERWATCHER_HOME, 'environment'
-updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
-updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
-
-silence = ->
-    process.stdout.write = ->
-    process.stderr.write = ->
 
 #This is essentially exec in that we will be done with running
 #when the sub command completes
@@ -64,45 +53,33 @@ watch = (options) ->
         (_.filter watches, (x) -> x.length).join('\n') + '\n'
     if options['<giturl>']
         exec path.join(__dirname, 'clone_and_watch'), options['<giturl>'], options['<directory>']
-    else
-        exec path.join(__dirname, 'watch'), options['<directory>']
 
 environment = (options) ->
     if fs.existsSync environmentfile
         fs.unlinkSync environmentfile
     fs.symlinkSync options['<source_this_script>'], environmentfile
 
-task = (options) ->
-    #shell script with an exec to replace so this will end up being
-    #the daemon
-    taskfile = path.join process.env.SUPERWATCHER_HOME, 'tasks', options['<taskname>']
-    if not fs.existsSync path.dirname(taskfile)
-        wrench.mkdirSyncRecursive path.dirname(taskfile)
-    commandline = options['<commandline>'].join ' '
-    fs.writeFileSync taskfile,
-        """
-        if [ -f "#{environmentfile}" ]; then
-            source "#{environmentfile}"
-        fi
-        exec #{commandline}
-
-        """
-    fs.chmodSync taskfile, '644'
-
 start = (options) ->
+    #the watchdog itself, this is the main shell script run from cron
     watchdogfile = path.join process.env.SUPERWATCHER_HOME, 'watchdog'
     watchdogsourcefile = path.join __dirname, 'watchdog'
     if fs.existsSync watchdogfile
         fs.unlinkSync watchdogfile
     fs.symlinkSync watchdogsourcefile, watchdogfile
+    #the git updating script, called from the watchdog
+    updatefile = path.join process.env.SUPERWATCHER_HOME, "update_repo_as_needed"
+    updatesourcefile = path.join __dirname, "..", "bin", "update_repo_as_needed"
     if fs.existsSync updatefile
         fs.unlinkSync updatefile
     fs.symlinkSync updatesourcefile, updatefile
     #hand off the the shell script part
-    if options.restart
-        exec path.join(__dirname, 'start'), 'restart'
-    else
-        exec path.join(__dirname, 'start')
+    exec path.join(__dirname, 'start')
+
+stop = (options) ->
+    exec path.join(__dirname, 'stop')
+
+init = (options) ->
+    exec path.join(__dirname, 'init')
 
 info = (options) ->
     if fs.existsSync watchfile
@@ -111,20 +88,11 @@ info = (options) ->
     if fs.existsSync environmentfile
         console.log "environment present".green
         console.log fs.readFileSync(environmentfile, 'utf8').trim().blue
-    tasks = path.join process.env.SUPERWATCHER_HOME, 'tasks'
-    if fs.existsSync tasks
-        console.log "tasks present".green
-        for task in fs.readdirSync(tasks)
-            console.log task.green
-            console.log fs.readFileSync(path.join(tasks, task), 'utf8').trim().blue
 
-
+#command dispatch via short circuit
 options.watch and watch options
 options.environment and environment options
-options.task and task options
 options.start and start options
-options.restart and start options
-options.stop and exec path.join(__dirname, 'stop')
-options.init and exec path.join(__dirname, 'init')
-options.logs and exec path.join(__dirname, 'logs')
+options.stop and stop options
+options.init and init options
 options.info and info options

@@ -1,14 +1,12 @@
 {
   "name": "superwatcher",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "AutoUpdate and Watchdog system leveraging Git",
   "dependencies": {
     "coffee-script": "",
     "docopt": "",
-    "forever": "",
     "underscore": "",
     "js-yaml": "",
-    "chokidar": "",
     "wrench": "",
     "handlebars": "",
     "colors": ""

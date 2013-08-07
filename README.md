@@ -71,7 +71,7 @@ set it explicitly. This will be sourced before every autoupdate
 sequence, and lets you do fun stuff like pick the right `node`, set
 `PATH`, etc.
 
-## Enough Already! #
+## Enough Already!
 
 Ok, here is how you use the thing:
 
@@ -101,6 +101,12 @@ And shut the whole thing down with:
 ```
 superwatcher stop
 ```
+
+## Interactive
+
+You can also `superwatcher watchdog` and run the watchdog manually
+without cron, it sleeps for a minute, then watchdogs. This is great to
+run under [Docker](http://www.docker.io).
 
 ## Make a Sandwich
 
